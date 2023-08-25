@@ -4,7 +4,6 @@ import Back from '../common/Back';
 import Button from '../common/Button';
 import Analysis from './Analysis';
 import MyDisease from '../common/MyDisease';
-import { useState } from 'react';
 
 const Wrapper = styled.div`
   display: flex;
