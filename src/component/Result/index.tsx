@@ -40,11 +40,7 @@ const UserInfo = styled.div`
 const ResultPage = () => {
   const navigate = useNavigate();
 
-  const [list, setlist] = useState([
-    '알레르기 비염',
-    '알레르 비염',
-    '알레 비염',
-  ]);
+  const list = ['알레르기 비염'];
 
   return (
     <Wrapper>
