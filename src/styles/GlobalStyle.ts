@@ -1,7 +1,6 @@
 // global-style.ts
 import { createGlobalStyle } from 'styled-components';
-
-export const GlobalStyle = createGlobalStyle`
+const GlobalStyle = createGlobalStyle`
     :root{
         --color-main: #12DDCE;
         --color-sub-1: #F5F5F5;
@@ -10,9 +9,9 @@ export const GlobalStyle = createGlobalStyle`
         --color-danger: #FF4F4F;
         --color-warning: #FBB01F;
         --color-good: #47DD12;
-        --width-max: 76.8rem;
         --font-regular: 400;
         --font-bold: 700;
+        
     }
     
     body{
@@ -31,7 +30,23 @@ export const GlobalStyle = createGlobalStyle`
         cursor: pointer;
     }
 
-    input{
+    svg{
+        margin: 0;
+        padding: 0;
+        cursor: pointer;
+    }
+
+    input, ul, p{
         all: unset;
     }
+
+    #root{
+        max-width: 390px;
+        height: 100vh;
+        margin: 0 auto;
+        padding: 20px 40px;
+        box-sizing: border-box;
+    }
 `;
+
+export default GlobalStyle;
