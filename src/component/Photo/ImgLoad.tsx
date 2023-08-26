@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import imgLoad from '../../assets/imgLoad.svg';
 import circle from '../../assets/Circle.svg';
 import nutritionist2 from '../../assets/nutritionist2.svg';
@@ -60,7 +60,24 @@ const StateText = styled.figcaption`
   text-align: center;
 `;
 
+const scanAnimation = keyframes`
+  0%, 100% {
+    content: "스캔중.";
+  }
+  33% {
+    content: "스캔중..";
+  }
+  66% {
+    content: "스캔중...";
+  }
+`;
+
 const ButtonStateText = styled(StateText)`
+  &:before {
+    content: '스캔중.';
+    animation: ${scanAnimation} 1.2s infinite steps(3);
+  }
+
   font-weight: var(--font-bold);
 `;
 
@@ -111,7 +128,6 @@ const ImgLoad = () => {
               ></ScanBar>
             )}
           </ScanbarContainer>
-          {/* <div style={{ position: 'relative' }}></div> */}
           <ImgUpload
             type="file"
             id="file"
@@ -120,7 +136,6 @@ const ImgLoad = () => {
             disabled={isScan}
             onChange={handlerImgLoad}
           />
-
           {!isImgUpload && (
             <Explanation>
               <CircleImg src={circle} />
@@ -135,7 +150,7 @@ const ImgLoad = () => {
         <StateText>사진이 흔들리지 않았는지 확인해주세요.</StateText>
       )}
       <Button isDisabled={isScan} onClick={handleButtonImgLoad}>
-        {isScan ? <ButtonStateText>스캔중...</ButtonStateText> : '사진 업로드'}
+        {isScan ? <ButtonStateText /> : '사진 업로드'}
       </Button>
     </>
   );

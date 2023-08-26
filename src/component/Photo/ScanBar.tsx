@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { keyframes, styled } from 'styled-components';
 
-const slideAnimation = (height: number) => keyframes`
+const scanAnimation = (height: number) => keyframes`
   0%, 100% {
     transform: translateY(0px);
   }
@@ -12,16 +12,14 @@ const slideAnimation = (height: number) => keyframes`
 
 const ScanContainer = styled.span<{ height: number }>`
   position: absolute;
-
   width: 140%;
   height: 220px;
   left: -20%;
-
   border-top: 3px solid var(--color-main);
 
-  backdrop-filter: blur(2px);
+  backdrop-filter: saturate(30%);
 
-  animation: 3s infinite ${({ height }) => slideAnimation(height)};
+  animation: 3s infinite ${({ height }) => scanAnimation(height)};
 `;
 
 interface ScanBar {
@@ -30,7 +28,6 @@ interface ScanBar {
 }
 
 const ScanBar = ({ height, isScan }: ScanBar) => {
-  console.log(height);
   return <ScanContainer height={height}></ScanContainer>;
 };
 
