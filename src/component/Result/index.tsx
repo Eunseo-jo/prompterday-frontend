@@ -31,8 +31,7 @@ const Header = styled.div`
 `;
 
 const UserInfo = styled.div`
-  padding: 15px 20px;
-  box-sizing: border-box;
+  margin-bottom: 5px;
   cursor: default !important;
 `;
 
