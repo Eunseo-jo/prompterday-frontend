@@ -59,6 +59,11 @@ const ImageBox = styled.div<{ selected: boolean }>`
     display: flex;
     justify-content: center;
   }
+  img {
+    height: 194px;
+    weight: 215px;
+    margin-bottom: 16px;
+  }
 `;
 
 const SelectExpert = () => {
