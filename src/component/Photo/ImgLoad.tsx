@@ -2,8 +2,9 @@ import styled from 'styled-components';
 import imgLoad from '../../assets/imgLoad.svg';
 import circle from '../../assets/Circle.svg';
 import nutritionist2 from '../../assets/nutritionist2.svg';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Button from '../common/Button';
+import ScanBar from './ScanBar';
 
 const ImgContainer = styled.figure`
   display: flex;
@@ -11,8 +12,9 @@ const ImgContainer = styled.figure`
   justify-content: center;
   align-items: center;
 
-  width: 310px;
-  height: 200px;
+  overflow: hidden;
+  width: 330px;
+  height: 225px;
 `;
 
 const LoadImg = styled.img`
@@ -62,9 +64,14 @@ const ButtonStateText = styled(StateText)`
   font-weight: var(--font-bold);
 `;
 
+const ScanbarContainer = styled.div`
+  position: relative;
+`;
+
 const ImgLoad = () => {
   const [imgFile, setImgFile] = useState(imgLoad);
   const [isScan, setIsScan] = useState(false);
+  const imgRef = useRef<HTMLImageElement | null>(null);
 
   const isImgUpload = imgFile !== imgLoad;
 
@@ -74,11 +81,12 @@ const ImgLoad = () => {
       const fileReader = new FileReader();
       fileReader.onload = (event) => {
         const dataURL = event.target?.result;
-        if (typeof dataURL === 'string') {
+        if (typeof dataURL === 'string' && imgRef.current) {
+          imgRef.current.src = dataURL;
           setImgFile(dataURL);
+          setIsScan(true);
         }
       };
-      setIsScan(true);
       fileReader.readAsDataURL(file);
     }
   };
@@ -94,7 +102,16 @@ const ImgLoad = () => {
     <>
       <label htmlFor="file">
         <ImgContainer>
-          <LoadImg src={imgFile} alt="Loaded Image" />
+          <ScanbarContainer>
+            <LoadImg src={imgFile} alt="Loaded Image" ref={imgRef}></LoadImg>
+            {isScan && (
+              <ScanBar
+                height={imgRef.current ? imgRef.current.offsetHeight : 0}
+                isScan={isScan}
+              ></ScanBar>
+            )}
+          </ScanbarContainer>
+          {/* <div style={{ position: 'relative' }}></div> */}
           <ImgUpload
             type="file"
             id="file"
@@ -102,7 +119,8 @@ const ImgLoad = () => {
             accept="image/*"
             disabled={isScan}
             onChange={handlerImgLoad}
-          ></ImgUpload>
+          />
+
           {!isImgUpload && (
             <Explanation>
               <CircleImg src={circle} />

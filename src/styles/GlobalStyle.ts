@@ -12,7 +12,7 @@ const GlobalStyle = createGlobalStyle`
         --font-regular: 400;
         --font-bold: 700;
         
-    }
+    } 
     
     body{
         margin: 0;
@@ -20,7 +20,7 @@ const GlobalStyle = createGlobalStyle`
         font-family: Apple SD Gothic Neo, Roboto, Arial Helvetica, sans-serif;
     }
 
-    a{
+    a{ 
         text-decoration: none;
         color: inherit;
     }
