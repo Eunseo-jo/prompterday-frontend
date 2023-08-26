@@ -4,6 +4,7 @@ import HomePage from './component/Home';
 import ResultPage from './component/Result';
 import SelectConditionPage from './component/SelectCondition';
 import SelectExpert from './component/SelectExpert';
+import PhotoPage from './component/Photo';
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
       {
         path: 'select/option',
         element: <SelectExpert />,
+      },
+      {
+        path: 'select/option/photo',
+        element: <PhotoPage />,
       },
       {
         path: 'result',
