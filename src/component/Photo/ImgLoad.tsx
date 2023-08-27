@@ -1,15 +1,15 @@
 import styled, { keyframes } from 'styled-components';
 import imgLoad from '../../assets/imgLoad.svg';
-import circle from '../../assets/Circle.svg';
+import circle from '../../assets/circle.svg';
 import nutritionist2 from '../../assets/nutritionist2.svg';
-import { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import Button from '../common/Button';
 import ScanBar from './ScanBar';
 import { requestOCR } from '@/api/ocr';
 import { ValuesRef } from '@/types/photo';
 import { ingredients } from '@/api/ingredients';
 
-const ImgContainer = styled.figure`
+const ImgContainer = styled.figure<{ $isScan: boolean }>`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -17,12 +17,13 @@ const ImgContainer = styled.figure`
 
   overflow: hidden;
   width: 330px;
-  height: 225px;
+  height: 210px;
+  margin: ${({ $isScan }) => ($isScan ? '0 0 30px 0' : '0')};
 `;
 
 const LoadImg = styled.img`
   max-width: 270px;
-  max-height: 220px;
+  max-height: 210px;
 `;
 
 const ImgUpload = styled.input`
@@ -61,6 +62,9 @@ const StateText = styled.figcaption`
   font-weight: var(--font-regular);
 
   text-align: center;
+
+  position: absolute;
+  top: 265px;
 `;
 
 const scanAnimation = keyframes`
@@ -75,13 +79,23 @@ const scanAnimation = keyframes`
   }
 `;
 
-const ButtonStateText = styled(StateText)`
+const ButtonStateText = styled.div`
   &:before {
     content: '스캔중.';
     animation: ${scanAnimation} 1.2s infinite steps(3);
   }
 
+  margin-bottom: 0.3rem;
+  color: var(--color-sub-2);
+  font-size: 1.1rem;
+  font-weight: var(--font-regular);
+
+  text-align: center;
   font-weight: var(--font-bold);
+`;
+
+const EndText = styled(StateText)`
+  color: var(--color-danger);
 `;
 
 const ScanbarContainer = styled.div`
@@ -90,54 +104,66 @@ const ScanbarContainer = styled.div`
 
 interface ImgLoad {
   valuesRef: React.MutableRefObject<ValuesRef | null>;
+  isScan: boolean;
+  setIsScan: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-let isImgUpload = false;
-const ImgLoad = ({ valuesRef }: ImgLoad) => {
-  const [isScan, setIsScan] = useState(false);
+const ImgLoad = ({ valuesRef, isScan, setIsScan, setIsDisabled }: ImgLoad) => {
+  const [isImgUpload, setIsImgUpload] = useState(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
 
-  if (imgRef.current) {
-    isImgUpload = imgRef.current.src !== imgLoad;
-  }
+  const handlerImgLoad = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        const fileReader = new FileReader();
+        fileReader.onload = async (event) => {
+          const dataURL = event.target?.result;
 
-  const handlerImgLoad = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const fileReader = new FileReader();
-      fileReader.onload = async (event) => {
-        const dataURL = event.target?.result;
+          if (typeof dataURL === 'string' && imgRef.current) {
+            setIsScan(true);
+            setIsImgUpload(true);
+            setIsDisabled(true);
+            imgRef.current.src = dataURL;
+            const [imageFileName, imageFileFormat] = file.name.split('.');
 
-        if (typeof dataURL === 'string' && imgRef.current) {
-          setIsScan(true);
-          imgRef.current.src = dataURL;
-          const [imageFileName, imageFileFormat] = file.name.split('.');
-
-          const responseOCR = await requestOCR({
-            dataURL: dataURL.split(',')[1],
-            imageFileName,
-            imageFileFormat,
-          });
-
-          if (responseOCR && responseOCR.fields && valuesRef.current?.option) {
-            const { fields } = responseOCR;
-            const inferText = fields.reduce(
-              (acc, { inferText }) => (acc += ' ' + inferText),
-              '',
-            );
-            const option = valuesRef.current.option;
-            const responseInferText = await ingredients({
-              inferText,
-              option,
+            const responseOCR = await requestOCR({
+              dataURL: dataURL.split(',')[1],
+              imageFileName,
+              imageFileFormat,
             });
 
-            console.log(responseInferText);
+            if (
+              responseOCR &&
+              responseOCR.fields &&
+              valuesRef.current?.option
+            ) {
+              const { fields } = responseOCR;
+              const inferText = fields.reduce(
+                (acc, { inferText }) => (acc += ' ' + inferText),
+                '',
+              );
+              const option = valuesRef.current.option;
+
+              const responseInferText = await ingredients({
+                inferText,
+                option,
+              });
+              valuesRef.current = {
+                ...valuesRef.current,
+                inferText: responseInferText,
+              };
+
+              setIsScan(false);
+            }
           }
-        }
-      };
-      fileReader.readAsDataURL(file);
-    }
-  };
+        };
+        fileReader.readAsDataURL(file);
+      }
+    },
+    [],
+  );
 
   const handleButtonImgLoad = () => {
     const fileInput = document.getElementById('file');
@@ -149,13 +175,17 @@ const ImgLoad = ({ valuesRef }: ImgLoad) => {
   return (
     <>
       <label htmlFor="file">
-        <ImgContainer>
+        <ImgContainer
+          $isScan={
+            (isScan && valuesRef.current?.inferText !== undefined) ||
+            isImgUpload
+          }
+        >
           <ScanbarContainer>
             <LoadImg src={imgLoad} alt="Loaded Image" ref={imgRef}></LoadImg>
             {isScan && (
               <ScanBar
                 height={imgRef.current ? imgRef.current.offsetHeight : 0}
-                isScan={isScan}
               ></ScanBar>
             )}
           </ScanbarContainer>
@@ -177,11 +207,25 @@ const ImgLoad = ({ valuesRef }: ImgLoad) => {
         </ImgContainer>
       </label>
 
-      {isImgUpload && (
-        <StateText>사진이 흔들리지 않았는지 확인해주세요.</StateText>
-      )}
+      {isImgUpload ? (
+        isScan ? (
+          <StateText>사진이 흔들리지 않았는지 확인해주세요.</StateText>
+        ) : (
+          <EndText>
+            {valuesRef.current?.inferText === undefined
+              ? '*요청실패 재업로드'
+              : '*결과를 확인해주세요'}
+          </EndText>
+        )
+      ) : null}
       <Button isDisabled={isScan} onClick={handleButtonImgLoad}>
-        {isScan ? <ButtonStateText /> : '사진 업로드'}
+        {isScan ? (
+          <ButtonStateText />
+        ) : isImgUpload ? (
+          '사진 재업로드'
+        ) : (
+          '사진 업로드'
+        )}
       </Button>
     </>
   );

@@ -35,4 +35,5 @@ export interface ResponseOCR {
 export interface ValuesRef {
   disease: string[];
   option: string;
+  inferText: string[] | undefined;
 }

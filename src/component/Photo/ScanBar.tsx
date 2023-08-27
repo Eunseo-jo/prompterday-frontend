@@ -23,10 +23,9 @@ const ScanContainer = styled.span<{ height: number }>`
 
 interface ScanBar {
   height: number;
-  isScan: boolean;
 }
 
-const ScanBar = ({ height, isScan }: ScanBar) => {
+const ScanBar = ({ height }: ScanBar) => {
   return <ScanContainer height={height}></ScanContainer>;
 };
 

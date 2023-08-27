@@ -23,6 +23,6 @@ export const ingredients = async ({ inferText, option }: Ingredients) => {
     return response.data;
   } catch (error) {
     console.error('ingredients API Error:', error);
-    return null;
+    return undefined;
   }
 };
