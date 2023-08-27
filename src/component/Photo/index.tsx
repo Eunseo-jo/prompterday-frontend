@@ -4,7 +4,7 @@ import ImgLoad from './ImgLoad';
 import edit from '../../assets/edit.svg';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
-import { ValuesRef } from '@/types/photo';
+import { ValuesRef } from '@/types/common';
 import Button from '../common/Button';
 
 const Wrapper = styled.div`

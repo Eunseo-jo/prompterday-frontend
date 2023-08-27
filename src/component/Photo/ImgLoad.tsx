@@ -6,7 +6,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import Button from '../common/Button';
 import ScanBar from './ScanBar';
 import { requestOCR } from '@/api/ocr';
-import { ValuesRef } from '@/types/photo';
+import { ValuesRef } from '@/types/common';
 import { ingredients } from '@/api/ingredients';
 
 const ImgContainer = styled.figure<{ $isScan: boolean }>`
