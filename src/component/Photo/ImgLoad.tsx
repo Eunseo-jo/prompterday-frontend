@@ -5,6 +5,7 @@ import nutritionist2 from '../../assets/nutritionist2.svg';
 import { useRef, useState } from 'react';
 import Button from '../common/Button';
 import ScanBar from './ScanBar';
+import { requestOCR } from '@/api/ocr';
 
 const ImgContainer = styled.figure`
   display: flex;
@@ -85,23 +86,34 @@ const ScanbarContainer = styled.div`
   position: relative;
 `;
 
+let isImgUpload = false;
+
 const ImgLoad = () => {
-  const [imgFile, setImgFile] = useState(imgLoad);
   const [isScan, setIsScan] = useState(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
 
-  const isImgUpload = imgFile !== imgLoad;
+  if (imgRef.current) {
+    isImgUpload = imgRef.current.src !== imgLoad;
+  }
 
   const handlerImgLoad = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const fileReader = new FileReader();
-      fileReader.onload = (event) => {
+      fileReader.onload = async (event) => {
         const dataURL = event.target?.result;
         if (typeof dataURL === 'string' && imgRef.current) {
-          imgRef.current.src = dataURL;
-          setImgFile(dataURL);
           setIsScan(true);
+          imgRef.current.src = dataURL;
+          const [imageFileName, imageFileFormat] = file.name.split('.');
+
+          console.log(
+            await requestOCR({
+              dataURL: dataURL.split(',')[1],
+              imageFileName,
+              imageFileFormat,
+            }),
+          );
         }
       };
       fileReader.readAsDataURL(file);
@@ -120,7 +132,7 @@ const ImgLoad = () => {
       <label htmlFor="file">
         <ImgContainer>
           <ScanbarContainer>
-            <LoadImg src={imgFile} alt="Loaded Image" ref={imgRef}></LoadImg>
+            <LoadImg src={imgLoad} alt="Loaded Image" ref={imgRef}></LoadImg>
             {isScan && (
               <ScanBar
                 height={imgRef.current ? imgRef.current.offsetHeight : 0}

@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { keyframes, styled } from 'styled-components';
 
 const scanAnimation = (height: number) => keyframes`
@@ -17,7 +16,7 @@ const ScanContainer = styled.span<{ height: number }>`
   left: -20%;
   border-top: 3px solid var(--color-main);
 
-  backdrop-filter: saturate(30%);
+  backdrop-filter: sepia(40%);
 
   animation: 3s infinite ${({ height }) => scanAnimation(height)};
 `;
