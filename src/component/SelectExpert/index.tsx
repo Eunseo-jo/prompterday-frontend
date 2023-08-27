@@ -67,12 +67,12 @@ const ImageBox = styled.div<{ selected: boolean }>`
   }
 `;
 
+let values: string[];
 const SelectExpert = () => {
   const [selected, setSelected] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  let values: string[];
 
   useEffect(() => {
     const valuesString = queryParams.get('values');
@@ -134,15 +134,15 @@ const SelectExpert = () => {
           />
         </h1>
         <ImageBox
-          onClick={() => onClickImageBox('nutritionist')}
-          selected={selected === 'nutritionist'}
+          onClick={() => onClickImageBox('NUTRITIONIST')}
+          selected={selected === 'NUTRITIONIST'}
         >
           <img src={nutritionist} />
           <p>영양사(식품)</p>
         </ImageBox>
         <ImageBox
-          onClick={() => onClickImageBox('pharmacist')}
-          selected={selected === 'pharmacist'}
+          onClick={() => onClickImageBox('CHEMIST')}
+          selected={selected === 'CHEMIST'}
         >
           <img src={chemist} />
           <p>약사(의약품)</p>
