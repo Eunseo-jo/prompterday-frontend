@@ -1,10 +1,19 @@
 import styled from 'styled-components';
 import ReactModal from 'react-modal';
+import Icon from './Icon';
 
 const StyledModal = styled(ReactModal)`
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 9px 3px;
+  box-sizing: border-box;
+`;
+
+const CloseButton = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
 `;
 
 interface ModalProps {
@@ -46,7 +55,6 @@ const Modal = ({
       backgroundColor: 'white',
       justifyContent: 'center',
       overflow: 'auto',
-      padding: '0',
     },
   };
 
@@ -59,6 +67,9 @@ const Modal = ({
       shouldFocusAfterRender={false}
       ariaHideApp={false}
     >
+      <CloseButton>
+        <Icon icon="close" size={20} onClick={closeModal} color="#B6B6B6" />
+      </CloseButton>
       {children}
     </StyledModal>
   );
