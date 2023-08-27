@@ -39,7 +39,7 @@ const P = styled.p`
 
 const Info = ({ isOpen, closeModal }: InfoProps) => {
   return (
-    <Modal isOpen={isOpen} closeModal={closeModal}>
+    <Modal isOpen={isOpen} closeModal={closeModal} topValue="30%">
       <CloseButton>
         <Icon icon="close" size={20} onClick={closeModal} color="black" />
       </CloseButton>
