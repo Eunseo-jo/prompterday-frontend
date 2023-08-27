@@ -30,8 +30,7 @@ const Header = styled.div`
 
 const MyDiseaseContainer = styled.div`
   height: 80px;
-  padding: 10px 20px;
-  box-sizing: border-box;
+  margin-bottom: 5px;
 `;
 
 const SelectorBox = styled.div`

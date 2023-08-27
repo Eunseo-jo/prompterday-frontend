@@ -5,6 +5,9 @@ const Controller = styled.div`
   display: flex;
   justify-content: space-between;
   color: var(--color-sub-2);
+  padding: 0 10px;
+  padding-top: 15px;
+  box-sizing: border-box;
   margin-bottom: 5px;
   span {
     font-size: 0.875rem;
@@ -14,10 +17,11 @@ const Controller = styled.div`
 const ResetButton = styled.button`
   display: flex;
   justify-content: center;
-  align-items: baseline;
+  align-items: flex-start;
   border: none;
   text-align: center;
   color: var(--color-sub-2);
+  font-size: 0.875rem;
   svg {
     margin-left: 5px;
   }
@@ -28,6 +32,8 @@ const ListContainer = styled.ul`
   display: flex;
   overflow-x: auto;
   list-style: none;
+  padding: 3px 15px;
+  box-sizing: border-box;
 `;
 
 interface ListProps {
@@ -43,13 +49,15 @@ const List = styled.li<ListProps>`
   font-size: 1rem;
   border: 1px solid var(--color-main);
   border-radius: 1.875rem;
-  padding: 5px 15px;
+  padding: 6px 0;
+  padding-left: 12px;
   box-sizing: border-box;
   cursor: ${(props) => (props.mode === 'select' ? 'pointer' : 'default')};
   margin-right: 5px;
   svg {
-    margin-top: 3px;
-    margin-left: 5px;
+    display: flex;
+    margin: 0 5px;
+    margin-top: 4px;
   }
 `;
 
@@ -75,7 +83,7 @@ const MyDisease = ({ mode, selectedList, onDelete, reset }: MyDiseaseProps) => {
       <ListContainer>
         {selectedList.map((item) => (
           <List key={item} mode={mode} onClick={() => onDelete?.(item)}>
-            {item} <Icon icon="close" size={13.5} color="var(--color-sub-2)" />
+            {item} <Icon icon="close" size={20} color="var(--color-sub-2)" />
           </List>
         ))}
       </ListContainer>

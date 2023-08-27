@@ -26,13 +26,13 @@ interface SelectorProps {
   addList: (newList: string) => void;
 }
 
-function Selector({ keyword, addList }: SelectorProps) {
+const Selector = ({ keyword, addList }: SelectorProps) => {
   const handleItemClick = (disease: string) => {
     addList(disease);
   };
 
   const filteredList = DiseaseList.filter((disease) =>
-    disease.toLowerCase().includes(keyword.toLowerCase()),
+    disease.includes(keyword),
   );
 
   return (
@@ -40,19 +40,21 @@ function Selector({ keyword, addList }: SelectorProps) {
       {keyword &&
         filteredList.map((disease) => (
           <SearchList key={disease} onClick={() => handleItemClick(disease)}>
-            <span
-              dangerouslySetInnerHTML={{
-                // XSS 취약
-                __html: disease.replace(
-                  new RegExp(`(${keyword})`, 'gi'),
-                  `<span style="color: var(--color-main);">$1</span>`,
+            {disease
+              .split(new RegExp(`(${keyword})`, 'gi'))
+              .map((text, index) =>
+                text === keyword ? (
+                  <span key={index} style={{ color: 'var(--color-main)' }}>
+                    {text}
+                  </span>
+                ) : (
+                  text
                 ),
-              }}
-            />
+              )}
           </SearchList>
         ))}
     </SearchListContainer>
   );
-}
+};
 
 export default Selector;

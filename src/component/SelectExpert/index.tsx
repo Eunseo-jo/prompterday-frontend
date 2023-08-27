@@ -6,6 +6,7 @@ import Button from '../common/Button';
 import Icon from '../common/Icon';
 import nutritionist from '../../assets/nutritionist.png';
 import chemist from '../../assets/chemist.png';
+import Info from './Info';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -59,6 +60,11 @@ const ImageBox = styled.div<{ selected: boolean }>`
     display: flex;
     justify-content: center;
   }
+  img {
+    height: 194px;
+    weight: 215px;
+    margin-bottom: 16px;
+  }
 `;
 
 const SelectExpert = () => {
@@ -94,6 +100,16 @@ const SelectExpert = () => {
   const onClickImageBox = (value: string) => {
     setSelected(value);
   };
+
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const openModal = () => {
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
+
   return (
     <Wrapper>
       <Header>
@@ -110,7 +126,12 @@ const SelectExpert = () => {
       <section>
         <h1>
           누구에게 물어볼까요?
-          <Icon icon="detail" size={22} color="var(--color-main)" />
+          <Icon
+            icon="detail"
+            size={22}
+            color="var(--color-main)"
+            onClick={openModal}
+          />
         </h1>
         <ImageBox
           onClick={() => onClickImageBox('nutritionist')}
@@ -127,6 +148,7 @@ const SelectExpert = () => {
           <p>약사(의약품)</p>
         </ImageBox>
       </section>
+      <Info isOpen={modalIsOpen} closeModal={closeModal} />
       <Button isDisabled={selected === ''} onClick={onClickNext}>
         다음
       </Button>
