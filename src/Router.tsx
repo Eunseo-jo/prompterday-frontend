@@ -25,7 +25,7 @@ const router = createBrowserRouter([
         element: <SelectExpert />,
       },
       {
-        path: 'select/option/photo',
+        path: 'select/photo',
         element: <PhotoPage />,
       },
       {

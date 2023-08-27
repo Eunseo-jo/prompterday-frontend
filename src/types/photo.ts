@@ -31,3 +31,8 @@ export interface ResponseOCR {
   timestamp: Date;
   version: string;
 }
+
+export interface ValuesRef {
+  disease: string[];
+  option: string;
+}

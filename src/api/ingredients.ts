@@ -1,25 +1,20 @@
 import axios from 'axios';
 
-export const ingredients = async () => {
+interface Ingredients {
+  inferText: string;
+  option: string;
+}
+
+export const ingredients = async ({ inferText, option }: Ingredients) => {
   try {
     const response = await axios.post(
-      import.meta.env.REACT_APP_OCR_API_Gateway,
+      import.meta.env.REACT_APP_GPT_API_GATEWAY,
       {
-        version: 'V2',
-        requestId: 'id',
-        timestamp: 0,
-        lang: 'ko',
-        images: [
-          {
-            format: imageFileFormat,
-            name: imageFileName,
-            data: dataURL,
-          },
-        ],
+        description: inferText,
+        extractTarget: option,
       },
       {
         headers: {
-          'X-OCR-SECRET': `${import.meta.env.REACT_APP_OCR_API_KEY}`, // 도메인에서 생성한 X-OCR-SECRET
           'Content-Type': 'application/json',
         },
       },
@@ -27,7 +22,7 @@ export const ingredients = async () => {
 
     return response.data;
   } catch (error) {
-    console.error('OCR API Error:', error);
+    console.error('ingredients API Error:', error);
     return null;
   }
 };

@@ -6,6 +6,8 @@ import { useRef, useState } from 'react';
 import Button from '../common/Button';
 import ScanBar from './ScanBar';
 import { requestOCR } from '@/api/ocr';
+import { ValuesRef } from '@/types/photo';
+import { ingredients } from '@/api/ingredients';
 
 const ImgContainer = styled.figure`
   display: flex;
@@ -86,9 +88,12 @@ const ScanbarContainer = styled.div`
   position: relative;
 `;
 
-let isImgUpload = false;
+interface ImgLoad {
+  valuesRef: React.MutableRefObject<ValuesRef | null>;
+}
 
-const ImgLoad = () => {
+let isImgUpload = false;
+const ImgLoad = ({ valuesRef }: ImgLoad) => {
   const [isScan, setIsScan] = useState(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
 
@@ -102,20 +107,31 @@ const ImgLoad = () => {
       const fileReader = new FileReader();
       fileReader.onload = async (event) => {
         const dataURL = event.target?.result;
+
         if (typeof dataURL === 'string' && imgRef.current) {
           setIsScan(true);
           imgRef.current.src = dataURL;
           const [imageFileName, imageFileFormat] = file.name.split('.');
 
-          const response = await requestOCR({
+          const responseOCR = await requestOCR({
             dataURL: dataURL.split(',')[1],
             imageFileName,
             imageFileFormat,
           });
 
-          if (response && response.fields) {
-            const { fields } = response;
-            console.log(fields);
+          if (responseOCR && responseOCR.fields && valuesRef.current?.option) {
+            const { fields } = responseOCR;
+            const inferText = fields.reduce(
+              (acc, { inferText }) => (acc += ' ' + inferText),
+              '',
+            );
+            const option = valuesRef.current.option;
+            const responseInferText = await ingredients({
+              inferText,
+              option,
+            });
+
+            console.log(responseInferText);
           }
         }
       };

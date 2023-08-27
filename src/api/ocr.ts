@@ -14,7 +14,7 @@ export const requestOCR = async ({
 }: RequestOCR) => {
   try {
     const response = await axios.post<ResponseOCR>(
-      import.meta.env.REACT_APP_OCR_API_Gateway,
+      import.meta.env.REACT_APP_OCR_API_GATEWAY,
       {
         version: 'V2',
         requestId: 'id',
@@ -30,7 +30,7 @@ export const requestOCR = async ({
       },
       {
         headers: {
-          'X-OCR-SECRET': `${import.meta.env.REACT_APP_OCR_API_KEY}`, // 도메인에서 생성한 X-OCR-SECRET
+          'X-OCR-SECRET': `${import.meta.env.REACT_APP_OCR_API_KEY}`,
           'Content-Type': 'application/json',
         },
       },

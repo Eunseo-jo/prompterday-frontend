@@ -17,6 +17,13 @@ export default ({ mode }) => {
           ws: true,
           rewrite: (path) => path.replace(/^\/ocr/, ''),
         },
+        '/api': {
+          target: process.env.REACT_APP_GPT_API_INVOKE,
+          changeOrigin: true,
+          secure: false,
+          ws: true,
+          rewrite: (path) => path.replace(/^\/api/, ''),
+        },
       },
       port: 3000,
     },
