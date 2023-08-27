@@ -107,13 +107,16 @@ const ImgLoad = () => {
           imgRef.current.src = dataURL;
           const [imageFileName, imageFileFormat] = file.name.split('.');
 
-          console.log(
-            await requestOCR({
-              dataURL: dataURL.split(',')[1],
-              imageFileName,
-              imageFileFormat,
-            }),
-          );
+          const response = await requestOCR({
+            dataURL: dataURL.split(',')[1],
+            imageFileName,
+            imageFileFormat,
+          });
+
+          if (response && response.fields) {
+            const { fields } = response;
+            console.log(fields);
+          }
         }
       };
       fileReader.readAsDataURL(file);

@@ -1,19 +1,8 @@
-import { ResponseOCR } from '@/types/photo';
 import axios from 'axios';
 
-interface RequestOCR {
-  dataURL: string;
-  imageFileName: string;
-  imageFileFormat: string;
-}
-
-export const requestOCR = async ({
-  dataURL,
-  imageFileName,
-  imageFileFormat,
-}: RequestOCR) => {
+export const ingredients = async () => {
   try {
-    const response = await axios.post<ResponseOCR>(
+    const response = await axios.post(
       import.meta.env.REACT_APP_OCR_API_Gateway,
       {
         version: 'V2',
@@ -36,7 +25,7 @@ export const requestOCR = async ({
       },
     );
 
-    return response.data.images[0];
+    return response.data;
   } catch (error) {
     console.error('OCR API Error:', error);
     return null;
