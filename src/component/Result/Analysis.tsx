@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { ResponseItem, Result } from '../../types/common';
+import { DangerLabel, WarnLabel, NormalLabel } from './Labels';
 import styled from 'styled-components';
 import Icon from '../common/Icon';
-
-import { DangerLabel, WarnLabel, NormalLabel } from './Labels';
+import Detail from './Detail';
 
 const Wrapper = styled.div`
   display: flex;
@@ -28,7 +28,6 @@ const ResultSummary = styled.div`
   box-shadow: 2px 2px 6px 1px rgba(0, 0, 0, 0.15);
   padding: 0 20px;
   box-sizing: border-box;
-  margin-bottom: 15px;
   p {
     color: var(--color-sub-2);
     font-size: 0.875rem;
@@ -66,7 +65,7 @@ const LabelBox = styled.ul`
 
 const DetailList = styled.ul`
   width: 100%;
-  height: 335px;
+  height: 350px;
   list-style: none;
   overflow-y: auto;
   margin-bottom: 35px;
@@ -81,6 +80,7 @@ const DetailList = styled.ul`
     box-sizing: border-box;
     font-size: 0.875rem;
     font-weight: var(--font-regular);
+
     span {
       max-width: 220px;
       white-space: nowrap;
@@ -92,6 +92,10 @@ const DetailList = styled.ul`
     svg {
       cursor: pointer;
     }
+  }
+
+  li:first-child {
+    margin-top: 15px;
   }
 `;
 
@@ -135,53 +139,7 @@ const Analysis = () => {
         intake: null,
       },
       {
-        name: '가공유지(팜분별유(부분경화유:말레이시아산)가공유지(팜분별유(부분경화유:말레이시아산',
-        criteria: 3,
-        reason:
-          '과다 섭취 시 고지혈증, 심장질환 등의 위험을 초래할 수 있습니다.',
-        characteristic: '식품가공 과정에서 사용되는 기름 성분입니다.',
-        intake: null,
-      },
-      {
-        name: '알로에',
-        criteria: 1,
-        reason: null,
-        characteristic:
-          '식물로부터 추출된 성분으로, 주로 피부에 사용되는데 건강에 해로운 부작용은 없습니다.',
-        intake: null,
-      },
-      {
-        name: '밀가루',
-        criteria: 1,
-        reason: null,
-        characteristic: '주로 빵, 과자, 면 등의 제품에 사용되는 원재료입니다.',
-        intake: null,
-      },
-      {
-        name: '가공유지(팜분별유(부분경화유:말레이시아산)가공유지(팜분별유(부분경화유:말레이시아산',
-        criteria: 3,
-        reason:
-          '과다 섭취 시 고지혈증, 심장질환 등의 위험을 초래할 수 있습니다.',
-        characteristic: '식품가공 과정에서 사용되는 기름 성분입니다.',
-        intake: null,
-      },
-      {
-        name: '알로에',
-        criteria: 1,
-        reason: null,
-        characteristic:
-          '식물로부터 추출된 성분으로, 주로 피부에 사용되는데 건강에 해로운 부작용은 없습니다.',
-        intake: null,
-      },
-      {
-        name: '밀가루',
-        criteria: 1,
-        reason: null,
-        characteristic: '주로 빵, 과자, 면 등의 제품에 사용되는 원재료입니다.',
-        intake: null,
-      },
-      {
-        name: '가공유지(팜분별유(부분경화유:말레이시아산)가공유지(팜분별유(부분경화유:말레이시아산',
+        name: '가공유지(팜분별유(부분경화유:말레이시아산)',
         criteria: 3,
         reason:
           '과다 섭취 시 고지혈증, 심장질환 등의 위험을 초래할 수 있습니다.',
@@ -203,11 +161,11 @@ const Analysis = () => {
     const normal: ResponseItem[] = [];
     jsonResult.response.map((item) => {
       if (item.criteria === 1) {
-        danger.push(item);
+        normal.push(item);
       } else if (item.criteria === 2) {
         warn.push(item);
       } else if (item.criteria === 3) {
-        normal.push(item);
+        danger.push(item);
       }
     });
 
@@ -217,7 +175,16 @@ const Analysis = () => {
       normal,
     });
   }, []);
+  const [selectedItem, setSelectedItem] = useState<ResponseItem | null>(null);
 
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const openModal = () => {
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
   return (
     <Wrapper>
       <ResultSummary>
@@ -241,11 +208,24 @@ const Analysis = () => {
             <li key={item.name}>
               {label.label}
               <span>{item.name}</span>
-              <Icon icon="detail" size={18} color="var(--color-main)" />
+              <Icon
+                icon="detail"
+                size={18}
+                color="var(--color-main)"
+                onClick={() => {
+                  openModal();
+                  setSelectedItem(item);
+                }}
+              />
             </li>
           )),
         )}
       </DetailList>
+      <Detail
+        isOpen={modalIsOpen}
+        closeModal={closeModal}
+        item={selectedItem}
+      />
     </Wrapper>
   );
 };
