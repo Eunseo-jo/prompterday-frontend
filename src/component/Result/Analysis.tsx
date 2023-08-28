@@ -5,20 +5,6 @@ import styled from 'styled-components';
 import Icon from '../common/Icon';
 import Detail from './Detail';
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  section {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    justify-content: center;
-  }
-`;
-
 const ResultSummary = styled.div`
   width: 100%;
   height: 105px;
@@ -28,6 +14,7 @@ const ResultSummary = styled.div`
   box-shadow: 2px 2px 6px 1px rgba(0, 0, 0, 0.15);
   padding: 0 20px;
   box-sizing: border-box;
+  white-space: nowrap;
   p {
     color: var(--color-sub-2);
     font-size: 0.875rem;
@@ -62,13 +49,18 @@ const LabelBox = styled.ul`
     }
   }
 `;
+const DetailContainer = styled.div`
+  height: 70%;
+  width: 100%;
+  overflow-y: auto;
+  flex-grow: 1;
+`;
 
 const DetailList = styled.ul`
   width: 100%;
-  height: 350px;
+  height: 100%;
   list-style: none;
-  overflow-y: auto;
-  margin-bottom: 35px;
+
   li {
     width: 100%;
     max-width: 330px;
@@ -144,7 +136,7 @@ const Analysis = ({ resultData }: { resultData: ResponseItem[] }) => {
   };
 
   return (
-    <Wrapper>
+    <>
       <ResultSummary>
         <p>
           이 제품은 <span>먹어도 괜찮아요</span>
@@ -160,31 +152,33 @@ const Analysis = ({ resultData }: { resultData: ResponseItem[] }) => {
         </LabelBox>
       </ResultSummary>
 
-      <DetailList>
-        {labels.map((label) =>
-          label.items.map((item) => (
-            <li key={item.name}>
-              {label.label}
-              <span>{item.name}</span>
-              <Icon
-                icon="detail"
-                size={18}
-                color="var(--color-main)"
-                onClick={() => {
-                  openModal();
-                  setSelectedItem(item);
-                }}
-              />
-            </li>
-          )),
-        )}
-      </DetailList>
+      <DetailContainer>
+        <DetailList>
+          {labels.map((label) =>
+            label.items.map((item) => (
+              <li key={item.name}>
+                {label.label}
+                <span>{item.name}</span>
+                <Icon
+                  icon="detail"
+                  size={18}
+                  color="var(--color-main)"
+                  onClick={() => {
+                    openModal();
+                    setSelectedItem(item);
+                  }}
+                />
+              </li>
+            )),
+          )}
+        </DetailList>
+      </DetailContainer>
       <Detail
         isOpen={modalIsOpen}
         closeModal={closeModal}
         item={selectedItem}
       />
-    </Wrapper>
+    </>
   );
 };
 

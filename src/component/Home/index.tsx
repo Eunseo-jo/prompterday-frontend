@@ -28,12 +28,13 @@ const Wrapper = styled.div`
 const SearchBox = styled.div`
   width: 100%;
   height: 37px;
+  flex: 1;
   display: flex;
   border-bottom: 2px solid var(--color-main);
   align-items: center;
   justify-content: flex-end;
   cursor: pointer;
-  margin-bottom: 271px;
+  margin-bottom: 210px;
 `;
 
 const HomePage = () => {
