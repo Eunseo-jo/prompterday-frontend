@@ -17,7 +17,7 @@ const ImgContainer = styled.figure<{ $isScan: boolean }>`
 
   overflow: hidden;
   width: 330px;
-  height: 210px;
+  height: 220px;
   margin: ${({ $isScan }) => ($isScan ? '0 0 30px 0' : '0')};
 `;
 
@@ -64,7 +64,7 @@ const StateText = styled.figcaption`
   text-align: center;
 
   position: absolute;
-  top: 265px;
+  top: 268px;
 `;
 
 const scanAnimation = keyframes`
@@ -105,11 +105,11 @@ const ScanbarContainer = styled.div`
 interface ImgLoad {
   valuesRef: React.MutableRefObject<ValuesRef | null>;
   isScan: boolean;
-  setIsScan: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsDisabled: React.Dispatch<React.SetStateAction<boolean>>;
+  scanToggle: (prevState: boolean) => void;
+  inputDisabled: () => void;
 }
 
-const ImgLoad = ({ valuesRef, isScan, setIsScan, setIsDisabled }: ImgLoad) => {
+const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
   const [isImgUpload, setIsImgUpload] = useState(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
 
@@ -122,11 +122,15 @@ const ImgLoad = ({ valuesRef, isScan, setIsScan, setIsDisabled }: ImgLoad) => {
           const dataURL = event.target?.result;
 
           if (typeof dataURL === 'string' && imgRef.current) {
-            setIsScan(true);
             setIsImgUpload(true);
-            setIsDisabled(true);
+            scanToggle(true);
+            inputDisabled();
+
             imgRef.current.src = dataURL;
-            const [imageFileName, imageFileFormat] = file.name.split('.');
+
+            const splitIndex = file.name.lastIndexOf('.');
+            const imageFileName = file.name.substring(0, splitIndex);
+            const imageFileFormat = file.name.substring(splitIndex + 1);
 
             const responseOCR = await requestOCR({
               dataURL: dataURL.split(',')[1],
@@ -154,9 +158,8 @@ const ImgLoad = ({ valuesRef, isScan, setIsScan, setIsDisabled }: ImgLoad) => {
                 ...valuesRef.current,
                 inferText: responseInferText,
               };
-
-              setIsScan(false);
             }
+            scanToggle(false);
           }
         };
         fileReader.readAsDataURL(file);
@@ -193,7 +196,7 @@ const ImgLoad = ({ valuesRef, isScan, setIsScan, setIsDisabled }: ImgLoad) => {
             type="file"
             id="file"
             name="file"
-            accept="image/*"
+            accept=".jpg, .jpeg, .png, .pdf, .tiff"
             disabled={isScan}
             onChange={handlerImgLoad}
           />

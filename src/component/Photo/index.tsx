@@ -23,6 +23,8 @@ const InferTextContainer = styled.section`
   width: 100%;
   height: 45%;
   margin: 4%;
+
+  flex: 1;
 `;
 
 const EditImg = styled.img`
@@ -48,11 +50,7 @@ const InferText = styled.textarea`
 
   word-break: keep-all;
   outline: none;
-`;
-
-const Container = styled.div`
-  width: 100%;
-  height: 100%;
+  resize: none;
 `;
 
 const PhotoPage = () => {
@@ -70,7 +68,7 @@ const PhotoPage = () => {
     if (valuesParam) {
       valuesRef.current = JSON.parse(decodeURIComponent(valuesParam));
     } else {
-      navigate('/');
+      navigate('/', { replace: true });
     }
   }, []);
 
@@ -96,6 +94,14 @@ const PhotoPage = () => {
     navigate(`/result?values=${values}`);
   };
 
+  const scanToggle = (state: boolean) => {
+    setIsScan(state);
+  };
+
+  const inputDisabled = () => {
+    setIsDisabled(true);
+  };
+
   return (
     <Wrapper>
       <Header>
@@ -104,23 +110,21 @@ const PhotoPage = () => {
 
       <ImgLoad
         isScan={isScan}
-        setIsScan={setIsScan}
+        scanToggle={scanToggle}
         valuesRef={valuesRef}
-        setIsDisabled={setIsDisabled}
+        inputDisabled={inputDisabled}
       />
 
       <InferTextContainer>
-        {!isScan && valuesRef.current?.inferText !== undefined ? (
-          <InferText
-            ref={inferTextRef}
-            defaultValue={valuesRef.current?.inferText}
-            disabled={isDisabled}
-          />
-        ) : (
-          <Container />
-        )}
         {!isScan && valuesRef.current?.inferText !== undefined && (
-          <EditImg src={edit} onClick={handleEdit} />
+          <>
+            <InferText
+              ref={inferTextRef}
+              defaultValue={valuesRef.current?.inferText}
+              disabled={isDisabled}
+            />
+            <EditImg src={edit} onClick={handleEdit} />
+          </>
         )}
       </InferTextContainer>
 
