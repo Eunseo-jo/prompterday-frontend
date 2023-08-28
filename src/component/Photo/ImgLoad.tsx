@@ -144,6 +144,7 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
         // await scanImg({ imgURL, imageFileName, imageFileFormat });
       };
       fileReader.readAsDataURL(file);
+      e.target.value = '';
     }
   };
 
@@ -191,14 +192,34 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
 
   const closeModal = () => {
     setModalOpen(false);
-    if (inputImage.beforeImg !== inputImage.imgURL) {
+    if (inputImage.beforeImg !== inputImage.imgURL && imgRef.current) {
+      imgRef.current.src = inputImage.beforeImg ?? imgLoad;
       const changeImg = inputImage.beforeImg ?? imgLoad;
+      changInputImg(changeImg);
+    } else {
+      (async () => {
+        if (
+          inputImage.imageFileFormat &&
+          inputImage.imageFileName &&
+          inputImage.imgURL
+        ) {
+          const scanImage: ScanImg = {
+            imgURL: inputImage.imgURL,
+            imageFileName: inputImage.imageFileName,
+            imageFileFormat: inputImage.imageFileFormat,
+          };
 
-      setInputImage((prev) => ({
-        ...prev,
-        imgURL: changeImg,
-      }));
+          await handleScanImg(scanImage);
+        }
+      })();
     }
+  };
+
+  const changInputImg = (changeImg: string) => {
+    setInputImage((prev) => ({
+      ...prev,
+      imgURL: changeImg,
+    }));
   };
 
   return (
@@ -265,6 +286,7 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
         imgRef={imgRef}
         inputImage={inputImage}
         closeModal={closeModal}
+        changInputImg={changInputImg}
       ></CropperModal>
     </>
   );
