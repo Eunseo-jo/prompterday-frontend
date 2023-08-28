@@ -37,3 +37,16 @@ export interface ValuesRef {
   option: string;
   inferText: string[] | undefined;
 }
+
+export interface ScanImg {
+  imgURL: string;
+  imageFileName: string;
+  imageFileFormat: string;
+}
+
+export interface InputImage {
+  imgURL: string;
+  beforeImg: string | null;
+  imageFileName: string | null;
+  imageFileFormat: string | null;
+}

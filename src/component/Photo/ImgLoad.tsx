@@ -2,12 +2,13 @@ import styled, { keyframes } from 'styled-components';
 import imgLoad from '../../assets/imgLoad.svg';
 import circle from '../../assets/circle.svg';
 import nutritionist2 from '../../assets/nutritionist2.svg';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Button from '../common/Button';
 import ScanBar from './ScanBar';
 import { requestOCR } from '@/api/ocr';
-import { ValuesRef } from '@/types/photo';
+import { InputImage, ScanImg, ValuesRef } from '@/types/photo';
 import { ingredients } from '@/api/ingredients';
+import CropperModal from './CropperModal';
 
 const ImgContainer = styled.figure<{ $isScan: boolean }>`
   display: flex;
@@ -111,67 +112,92 @@ interface ImgLoad {
 
 const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
   const [isImgUpload, setIsImgUpload] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [inputImage, setInputImage] = useState<InputImage>({
+    imgURL: imgLoad,
+    beforeImg: null,
+    imageFileName: null,
+    imageFileFormat: null,
+  });
   const imgRef = useRef<HTMLImageElement | null>(null);
 
-  const handlerImgLoad = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) {
-        const fileReader = new FileReader();
-        fileReader.onload = async (event) => {
-          const dataURL = event.target?.result;
+  const handlerImgLoad = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const fileReader = new FileReader();
+      fileReader.onload = async (event) => {
+        const imgURL = event.target?.result;
 
-          if (typeof dataURL === 'string' && imgRef.current) {
-            setIsImgUpload(true);
-            scanToggle(true);
-            inputDisabled();
+        if (typeof imgURL === 'string' && imgRef.current) {
+          const splitIndex = file.name.lastIndexOf('.');
+          const imageFileName = file.name.substring(0, splitIndex);
+          const imageFileFormat = file.name.substring(splitIndex + 1);
 
-            imgRef.current.src = dataURL;
+          setInputImage((prev) => ({
+            ...prev,
+            imgURL,
+            imageFileName: imageFileName,
+            imageFileFormat: imageFileFormat,
+          }));
+          setModalOpen(true);
+        }
+        // await scanImg({ imgURL, imageFileName, imageFileFormat });
+      };
+      fileReader.readAsDataURL(file);
+    }
+  };
 
-            const splitIndex = file.name.lastIndexOf('.');
-            const imageFileName = file.name.substring(0, splitIndex);
-            const imageFileFormat = file.name.substring(splitIndex + 1);
+  const handleScanImg = async ({
+    imgURL,
+    imageFileName,
+    imageFileFormat,
+  }: ScanImg) => {
+    setIsImgUpload(true);
+    scanToggle(true);
+    inputDisabled();
 
-            const responseOCR = await requestOCR({
-              dataURL: dataURL.split(',')[1],
-              imageFileName,
-              imageFileFormat,
-            });
+    const responseOCR = await requestOCR({
+      dataURL: imgURL.split(',')[1],
+      imageFileName,
+      imageFileFormat,
+    });
 
-            if (
-              responseOCR &&
-              responseOCR.fields &&
-              valuesRef.current?.option
-            ) {
-              const { fields } = responseOCR;
-              const inferText = fields.reduce(
-                (acc, { inferText }) => (acc += ' ' + inferText),
-                '',
-              );
-              const option = valuesRef.current.option;
+    if (responseOCR && responseOCR.fields && valuesRef.current?.option) {
+      const { fields } = responseOCR;
+      const inferText = fields.reduce(
+        (acc, { inferText }) => (acc += ' ' + inferText),
+        '',
+      );
+      const option = valuesRef.current.option;
 
-              const responseInferText = await ingredients({
-                inferText,
-                option,
-              });
-              valuesRef.current = {
-                ...valuesRef.current,
-                inferText: responseInferText,
-              };
-            }
-            scanToggle(false);
-          }
-        };
-        fileReader.readAsDataURL(file);
-      }
-    },
-    [],
-  );
+      const responseInferText = await ingredients({
+        inferText,
+        option,
+      });
+      valuesRef.current = {
+        ...valuesRef.current,
+        inferText: responseInferText,
+      };
+    }
+    scanToggle(false);
+  };
 
   const handleButtonImgLoad = () => {
     const fileInput = document.getElementById('file');
     if (fileInput) {
       fileInput.click();
+    }
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    if (inputImage.beforeImg !== inputImage.imgURL) {
+      const changeImg = inputImage.beforeImg ?? imgLoad;
+
+      setInputImage((prev) => ({
+        ...prev,
+        imgURL: changeImg,
+      }));
     }
   };
 
@@ -185,7 +211,11 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
           }
         >
           <ScanbarContainer>
-            <LoadImg src={imgLoad} alt="Loaded Image" ref={imgRef}></LoadImg>
+            <LoadImg
+              src={inputImage.imgURL}
+              alt="Loaded Image"
+              ref={imgRef}
+            ></LoadImg>
             {isScan && (
               <ScanBar
                 height={imgRef.current ? imgRef.current.offsetHeight : 0}
@@ -230,6 +260,12 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
           '사진 업로드'
         )}
       </Button>
+      <CropperModal
+        isOpen={modalOpen}
+        imgRef={imgRef}
+        inputImage={inputImage}
+        closeModal={closeModal}
+      ></CropperModal>
     </>
   );
 };
