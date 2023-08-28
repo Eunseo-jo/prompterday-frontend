@@ -14,7 +14,9 @@ const Wrapper = styled.div`
   section {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    height: 80%;
+    flex: 1;
+    margin-bottom: 10px;
   }
 `;
 

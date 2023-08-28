@@ -4,6 +4,7 @@ import styled from 'styled-components';
 const SearchListContainer = styled.ul`
   width: 100%;
   height: 100%;
+  max-height: 500px;
   list-style: none;
 `;
 

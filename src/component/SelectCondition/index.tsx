@@ -36,7 +36,7 @@ const MyDiseaseContainer = styled.div`
 const SelectorBox = styled.div`
   width: 100%;
   height: 100%;
-  max-height: 500px;
+  flex: 1;
   overflow-y: auto;
   margin-bottom: 7px;
 `;
