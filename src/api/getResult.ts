@@ -5,9 +5,9 @@ export const getResult = async ({ disease, inferText, option }: ValuesRef) => {
   let url = '';
 
   if (option === 'NUTRITIONIST') {
-    url = import.meta.env.REACT_APP_GPT_API_GETRESULT_NUTRITIONIST;
+    url = `${process.env.REACT_APP_GPT_API_GETRESULT_NUTRITIONIST}`;
   } else if (option === 'CHEMIST') {
-    url = import.meta.env.REACT_APP_GPT_API_GETRESULT_CHEMIST;
+    url = `${process.env.REACT_APP_GPT_API_GETRESULT_CHEMIST}`;
   }
 
   try {
