@@ -3,8 +3,7 @@ import react from '@vitejs/plugin-react';
 import * as path from 'path';
 
 export default ({ mode }) => {
-  process.env = Object.assign(process.env, loadEnv(mode, process.cwd(), ''));
-
+  const env = loadEnv(mode, process.cwd(), '');
   return defineConfig({
     envPrefix: 'REACT_APP_',
     plugins: [react()],
@@ -31,6 +30,29 @@ export default ({ mode }) => {
       alias: {
         '@': path.resolve(__dirname, './src'),
       },
+    },
+    define: {
+      'process.env.REACT_APP_OCR_API_INVOKE': JSON.stringify(
+        env.REACT_APP_OCR_API_INVOKE,
+      ),
+      'process.env.REACT_APP_GPT_API_INVOKE': JSON.stringify(
+        env.REACT_APP_GPT_API_INVOKE,
+      ),
+      'process.env.REACT_APP_OCR_API_GATEWAY': JSON.stringify(
+        env.REACT_APP_OCR_API_GATEWAY,
+      ),
+      'process.env.REACT_APP_OCR_API_KEY': JSON.stringify(
+        env.REACT_APP_OCR_API_KEY,
+      ),
+      'process.env.REACT_APP_GPT_API_GATEWAY': JSON.stringify(
+        env.REACT_APP_GPT_API_GATEWAY,
+      ),
+      'process.env.REACT_APP_GPT_API_GETRESULT_NUTRITIONIST': JSON.stringify(
+        env.REACT_APP_GPT_API_GETRESULT_NUTRITIONIST,
+      ),
+      'process.env.REACT_APP_GPT_API_GETRESULT_CHEMIST': JSON.stringify(
+        env.REACT_APP_GPT_API_GETRESULT_CHEMIST,
+      ),
     },
   });
 };
