@@ -2,7 +2,7 @@ import styled, { keyframes } from 'styled-components';
 import imgLoad from '../../assets/imgLoad.svg';
 import circle from '../../assets/circle.svg';
 import nutritionist2 from '../../assets/nutritionist2.svg';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Button from '../common/Button';
 import ScanBar from './ScanBar';
 import { requestOCR } from '@/api/ocr';
@@ -17,7 +17,7 @@ const ImgContainer = styled.figure<{ $isScan: boolean }>`
   align-items: center;
 
   overflow: hidden;
-  width: 330px;
+  width: 310px;
   height: 220px;
   margin: ${({ $isScan }) => ($isScan ? '0 0 30px 0' : '0')};
 `;
@@ -115,11 +115,31 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [inputImage, setInputImage] = useState<InputImage>({
     imgURL: imgLoad,
-    beforeImg: null,
+    beforeImg: imgLoad,
     imageFileName: null,
     imageFileFormat: null,
   });
   const imgRef = useRef<HTMLImageElement | null>(null);
+  const imgHeightRef = useRef(null);
+
+  useEffect(() => {
+    if (isScan) {
+      // (async () => {
+      //   if (
+      //     inputImage.imageFileFormat &&
+      //     inputImage.imageFileName &&
+      //     inputImage.imgURL
+      //   ) {
+      //     const scanImage: ScanImg = {
+      //       imgURL: inputImage.imgURL,
+      //       imageFileName: inputImage.imageFileName,
+      //       imageFileFormat: inputImage.imageFileFormat,
+      //     };
+      //     await handleScanImg(scanImage);
+      //   }
+      // })();
+    }
+  }, [inputImage.imgURL]);
 
   const handlerImgLoad = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -128,7 +148,7 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
       fileReader.onload = async (event) => {
         const imgURL = event.target?.result;
 
-        if (typeof imgURL === 'string' && imgRef.current) {
+        if (typeof imgURL === 'string') {
           const splitIndex = file.name.lastIndexOf('.');
           const imageFileName = file.name.substring(0, splitIndex);
           const imageFileFormat = file.name.substring(splitIndex + 1);
@@ -141,9 +161,8 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
           }));
           setModalOpen(true);
         }
-        // await scanImg({ imgURL, imageFileName, imageFileFormat });
       };
-      fileReader.readAsDataURL(file);
+      fileReader.readAsDataURL(file); //필요 한가?
       e.target.value = '';
     }
   };
@@ -154,7 +173,6 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
     imageFileFormat,
   }: ScanImg) => {
     setIsImgUpload(true);
-    scanToggle(true);
     inputDisabled();
 
     const responseOCR = await requestOCR({
@@ -192,30 +210,13 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
 
   const closeModal = () => {
     setModalOpen(false);
-    if (inputImage.beforeImg !== inputImage.imgURL && imgRef.current) {
-      imgRef.current.src = inputImage.beforeImg ?? imgLoad;
-      const changeImg = inputImage.beforeImg ?? imgLoad;
-      changInputImg(changeImg);
-    } else {
-      (async () => {
-        if (
-          inputImage.imageFileFormat &&
-          inputImage.imageFileName &&
-          inputImage.imgURL
-        ) {
-          const scanImage: ScanImg = {
-            imgURL: inputImage.imgURL,
-            imageFileName: inputImage.imageFileName,
-            imageFileFormat: inputImage.imageFileFormat,
-          };
-
-          await handleScanImg(scanImage);
-        }
-      })();
-    }
   };
 
-  const changInputImg = (changeImg: string) => {
+  const changeInputImg = (changeImg: string) => {
+    if (inputImage.beforeImg !== changeImg && imgRef.current) {
+      scanToggle(true);
+      setIsImgUpload(true);
+    }
     setInputImage((prev) => ({
       ...prev,
       imgURL: changeImg,
@@ -232,16 +233,14 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
           }
         >
           <ScanbarContainer>
-            <LoadImg
-              src={inputImage.imgURL}
-              alt="Loaded Image"
-              ref={imgRef}
-            ></LoadImg>
-            {isScan && (
-              <ScanBar
-                height={imgRef.current ? imgRef.current.offsetHeight : 0}
-              ></ScanBar>
-            )}
+            <div ref={imgHeightRef}>
+              <LoadImg
+                src={inputImage.imgURL}
+                alt="Loaded Image"
+                ref={imgRef}
+              />
+            </div>
+            {isScan && <ScanBar imgHeightRef={imgHeightRef}></ScanBar>}
           </ScanbarContainer>
           <ImgUpload
             type="file"
@@ -286,7 +285,7 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
         imgRef={imgRef}
         inputImage={inputImage}
         closeModal={closeModal}
-        changInputImg={changInputImg}
+        changeInputImg={changeInputImg}
       ></CropperModal>
     </>
   );

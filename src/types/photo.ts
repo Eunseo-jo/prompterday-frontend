@@ -46,7 +46,12 @@ export interface ScanImg {
 
 export interface InputImage {
   imgURL: string;
-  beforeImg: string | null;
+  beforeImg: string;
   imageFileName: string | null;
   imageFileFormat: string | null;
+}
+
+export interface ChangInputImgparameter {
+  changeImg: string;
+  height: number;
 }
