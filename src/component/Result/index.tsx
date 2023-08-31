@@ -1,63 +1,46 @@
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-import Back from '../common/Back';
-import Button from '../common/Button';
-import Analysis from './Analysis';
-import MyDisease from '../common/MyDisease';
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100%;
-  section {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-`;
-
-const Header = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  h1 {
-    color: #000;
-    text-align: center;
-    font-size: 1.25rem;
-    font-weight: var(--font-bold);
-    flex: 1;
-  }
-`;
-
-const UserInfo = styled.div`
-  margin-bottom: 5px;
-  cursor: default !important;
-`;
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { ResponseItem } from '@/types/common';
+import LoadingPage from '../Loading';
+import Result from './Result';
+import { getResult } from '@/api/getResult';
 
 const ResultPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const [userDisease, setUserDisease] = useState<string[] | null>(null);
+  const [resultData, setResultData] = useState<ResponseItem[]>();
 
-  const list = ['알레르기 비염'];
+  useEffect(() => {
+    const valuesString = queryParams.get('values');
+    if (valuesString !== null) {
+      try {
+        const values = JSON.parse(decodeURIComponent(valuesString));
+        setUserDisease(values.disease);
+        (async () => {
+          const response = await getResult(values);
+          setResultData(response);
+        })();
+      } catch (error) {
+        console.error(
+          'Error parsing query string "values" in result page:',
+          error,
+        );
+      }
+    } else {
+      navigate('/', { replace: true });
+    }
+  }, []);
 
   return (
-    <Wrapper>
-      <Header>
-        <Back />
-        <h1>분석결과</h1>
-      </Header>
-
-      <section>
-        <UserInfo>
-          <MyDisease mode="result" selectedList={list} />
-        </UserInfo>
-        <Analysis />
-      </section>
-
-      <Button isDisabled={false} onClick={() => navigate('/')}>
-        처음으로
-      </Button>
-    </Wrapper>
+    <>
+      {resultData && userDisease ? (
+        <Result userDisease={userDisease} resultData={resultData} />
+      ) : (
+        <LoadingPage />
+      )}
+    </>
   );
 };
 
