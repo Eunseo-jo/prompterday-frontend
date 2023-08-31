@@ -1,11 +1,12 @@
+import { useEffect, useState } from 'react';
 import { keyframes, styled } from 'styled-components';
 
 const scanAnimation = (height: number) => keyframes`
   0%, 100% {
-    transform: translateY(0px);
+    transform: translateY(-3px);
   }
   50% {
-    transform: translateY(${height}px);
+    transform: translateY(${-height}px);
   }
 `;
 
@@ -21,11 +22,24 @@ const ScanContainer = styled.span<{ height: number }>`
   animation: 3s infinite ${({ height }) => scanAnimation(height)};
 `;
 
-interface ScanBar {
-  height: number;
-}
+const ScanBar = ({
+  imgHeightRef,
+}: {
+  imgHeightRef: React.MutableRefObject<HTMLDivElement | null>;
+}) => {
+  const [height, setHeight] = useState(0);
 
-const ScanBar = ({ height }: ScanBar) => {
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (imgHeightRef.current) {
+        setHeight(imgHeightRef.current.getBoundingClientRect().height);
+      }
+    }, 0);
+    //cropper 라이브러리 비동기 작업으로 인한 setTimeout
+
+    return () => clearTimeout(timeoutId);
+  }, [imgHeightRef]);
+
   return <ScanContainer height={height}></ScanContainer>;
 };
 

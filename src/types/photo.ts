@@ -31,3 +31,27 @@ export interface ResponseOCR {
   timestamp: Date;
   version: string;
 }
+
+export interface ValuesRef {
+  disease: string[];
+  option: string;
+  inferText: string[] | undefined;
+}
+
+export interface ScanImg {
+  imgURL: string;
+  imageFileName: string;
+  imageFileFormat: string;
+}
+
+export interface InputImage {
+  imgURL: string;
+  beforeImg: string;
+  imageFileName: string | null;
+  imageFileFormat: string | null;
+}
+
+export interface ChangInputImgparameter {
+  changeImg: string;
+  height: number;
+}

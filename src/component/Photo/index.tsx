@@ -23,6 +23,8 @@ const InferTextContainer = styled.section`
   width: 100%;
   height: 45%;
   margin: 4%;
+
+  flex: 1;
 `;
 
 const EditImg = styled.img`
@@ -48,18 +50,15 @@ const InferText = styled.textarea`
 
   word-break: keep-all;
   outline: none;
-`;
-
-const Container = styled.div`
-  width: 100%;
-  height: 100%;
+  resize: none;
 `;
 
 const PhotoPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isScan, setIsScan] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(true);
+  const [isInputDisabled, setIsInputDisabled] = useState(true);
+  const [isNextButton, setIsNextButton] = useState(false);
   const valuesRef = useRef<ValuesRef | null>(null);
   const inferTextRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -70,12 +69,12 @@ const PhotoPage = () => {
     if (valuesParam) {
       valuesRef.current = JSON.parse(decodeURIComponent(valuesParam));
     } else {
-      navigate('/');
+      navigate('/', { replace: true });
     }
   }, []);
 
   const handleEdit = async () => {
-    await setIsDisabled(false);
+    await setIsInputDisabled(false);
 
     if (inferTextRef.current) {
       const textarea = inferTextRef.current;
@@ -96,6 +95,22 @@ const PhotoPage = () => {
     navigate(`/result?values=${values}`);
   };
 
+  const scanToggle = (state: boolean) => {
+    setIsScan(state);
+  };
+
+  const inputDisabled = () => {
+    setIsInputDisabled(true);
+  };
+
+  const inputEmptyCheck = () => {
+    if (inferTextRef.current?.value === '') {
+      setIsNextButton(true);
+    } else {
+      setIsNextButton(false);
+    }
+  };
+
   return (
     <Wrapper>
       <Header>
@@ -104,28 +119,29 @@ const PhotoPage = () => {
 
       <ImgLoad
         isScan={isScan}
-        setIsScan={setIsScan}
+        scanToggle={scanToggle}
         valuesRef={valuesRef}
-        setIsDisabled={setIsDisabled}
+        inputDisabled={inputDisabled}
       />
 
       <InferTextContainer>
-        {!isScan && valuesRef.current?.inferText !== undefined ? (
-          <InferText
-            ref={inferTextRef}
-            defaultValue={valuesRef.current?.inferText}
-            disabled={isDisabled}
-          />
-        ) : (
-          <Container />
-        )}
         {!isScan && valuesRef.current?.inferText !== undefined && (
-          <EditImg src={edit} onClick={handleEdit} />
+          <>
+            <InferText
+              ref={inferTextRef}
+              defaultValue={valuesRef.current?.inferText}
+              disabled={isInputDisabled}
+              onChange={inputEmptyCheck}
+            />
+            <EditImg src={edit} onClick={handleEdit} />
+          </>
         )}
       </InferTextContainer>
 
       <Button
-        isDisabled={isScan || valuesRef.current?.inferText === undefined}
+        isDisabled={
+          isScan || valuesRef.current?.inferText === undefined || isNextButton
+        }
         onClick={onClickNext}
       >
         다음
