@@ -9,6 +9,7 @@ import { requestOCR } from '@/api/ocr';
 import { InputImage, ScanImg, ValuesRef } from '@/types/photo';
 import { ingredients } from '@/api/ingredients';
 import CropperModal from './CropperModal';
+import { ReactCropperElement } from 'react-cropper';
 
 const ImgContainer = styled.figure<{ $isScan: boolean }>`
   display: flex;
@@ -119,25 +120,25 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
     imageFileName: null,
     imageFileFormat: null,
   });
-  const imgRef = useRef<HTMLImageElement | null>(null);
+  const imgRef = useRef<ReactCropperElement | null>(null);
   const imgHeightRef = useRef(null);
 
   useEffect(() => {
     if (isScan) {
-      // (async () => {
-      //   if (
-      //     inputImage.imageFileFormat &&
-      //     inputImage.imageFileName &&
-      //     inputImage.imgURL
-      //   ) {
-      //     const scanImage: ScanImg = {
-      //       imgURL: inputImage.imgURL,
-      //       imageFileName: inputImage.imageFileName,
-      //       imageFileFormat: inputImage.imageFileFormat,
-      //     };
-      //     await handleScanImg(scanImage);
-      //   }
-      // })();
+      (async () => {
+        if (
+          inputImage.imageFileFormat &&
+          inputImage.imageFileName &&
+          inputImage.imgURL
+        ) {
+          const scanImage: ScanImg = {
+            imgURL: inputImage.imgURL,
+            imageFileName: inputImage.imageFileName,
+            imageFileFormat: inputImage.imageFileFormat,
+          };
+          await handleScanImg(scanImage);
+        }
+      })();
     }
   }, [inputImage.imgURL]);
 
@@ -188,6 +189,7 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
         '',
       );
       const option = valuesRef.current.option;
+      console.log(inferText);
 
       const responseInferText = await ingredients({
         inferText,

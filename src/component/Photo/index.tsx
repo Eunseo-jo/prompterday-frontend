@@ -102,6 +102,10 @@ const PhotoPage = () => {
     setIsDisabled(true);
   };
 
+  const test = () => {
+    console.log();
+  };
+
   return (
     <Wrapper>
       <Header>
@@ -122,6 +126,7 @@ const PhotoPage = () => {
               ref={inferTextRef}
               defaultValue={valuesRef.current?.inferText}
               disabled={isDisabled}
+              onChange={test}
             />
             <EditImg src={edit} onClick={handleEdit} />
           </>
