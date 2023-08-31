@@ -1,7 +1,8 @@
 import styled, { keyframes } from 'styled-components';
 import imgLoad from '../../assets/imgLoad.svg';
 import circle from '../../assets/circle.svg';
-import nutritionist2 from '../../assets/nutritionist2.svg';
+import nutritionist from '../../assets/nutritionist.svg';
+import chemist from '../../assets/chemist.svg';
 import React, { useEffect, useRef, useState } from 'react';
 import Button from '../common/Button';
 import ScanBar from './ScanBar';
@@ -10,6 +11,7 @@ import { InputImage, ScanImg, ValuesRef } from '@/types/photo';
 import { ingredients } from '@/api/ingredients';
 import CropperModal from './CropperModal';
 import { ReactCropperElement } from 'react-cropper';
+import { useLocation } from 'react-router-dom';
 
 const ImgContainer = styled.figure<{ $isScan: boolean }>`
   display: flex;
@@ -122,6 +124,8 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
   });
   const imgRef = useRef<ReactCropperElement | null>(null);
   const imgHeightRef = useRef(null);
+  const { search } = useLocation();
+  const optionIcon = search.includes('NUTRITIONIST');
 
   useEffect(() => {
     if (isScan) {
@@ -189,7 +193,6 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
         '',
       );
       const option = valuesRef.current.option;
-
       const responseInferText = await ingredients({
         inferText,
         option,
@@ -254,7 +257,9 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
           {!isImgUpload && (
             <Explanation>
               <CircleImg src={circle} />
-              <NutritionistImg src={nutritionist2}></NutritionistImg>
+              <NutritionistImg
+                src={optionIcon ? nutritionist : chemist}
+              ></NutritionistImg>
               식품의 <b> 원재료명 </b> 사진을 업로드해주세요
             </Explanation>
           )}
@@ -281,6 +286,7 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
           '사진 업로드'
         )}
       </Button>
+
       <CropperModal
         isOpen={modalOpen}
         imgRef={imgRef}
