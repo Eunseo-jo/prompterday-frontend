@@ -57,7 +57,8 @@ const PhotoPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isScan, setIsScan] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(true);
+  const [isInputDisabled, setIsInputDisabled] = useState(true);
+  const [isNextButton, setIsNextButton] = useState(false);
   const valuesRef = useRef<ValuesRef | null>(null);
   const inferTextRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -73,7 +74,7 @@ const PhotoPage = () => {
   }, []);
 
   const handleEdit = async () => {
-    await setIsDisabled(false);
+    await setIsInputDisabled(false);
 
     if (inferTextRef.current) {
       const textarea = inferTextRef.current;
@@ -99,11 +100,15 @@ const PhotoPage = () => {
   };
 
   const inputDisabled = () => {
-    setIsDisabled(true);
+    setIsInputDisabled(true);
   };
 
-  const test = () => {
-    console.log();
+  const inputEmptyCheck = () => {
+    if (inferTextRef.current?.value === '') {
+      setIsNextButton(true);
+    } else {
+      setIsNextButton(false);
+    }
   };
 
   return (
@@ -125,8 +130,8 @@ const PhotoPage = () => {
             <InferText
               ref={inferTextRef}
               defaultValue={valuesRef.current?.inferText}
-              disabled={isDisabled}
-              onChange={test}
+              disabled={isInputDisabled}
+              onChange={inputEmptyCheck}
             />
             <EditImg src={edit} onClick={handleEdit} />
           </>
@@ -134,7 +139,9 @@ const PhotoPage = () => {
       </InferTextContainer>
 
       <Button
-        isDisabled={isScan || valuesRef.current?.inferText === undefined}
+        isDisabled={
+          isScan || valuesRef.current?.inferText === undefined || isNextButton
+        }
         onClick={onClickNext}
       >
         다음

@@ -163,7 +163,7 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
           setModalOpen(true);
         }
       };
-      fileReader.readAsDataURL(file); //필요 한가?
+      fileReader.readAsDataURL(file);
       e.target.value = '';
     }
   };
@@ -189,7 +189,6 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
         '',
       );
       const option = valuesRef.current.option;
-      console.log(inferText);
 
       const responseInferText = await ingredients({
         inferText,
