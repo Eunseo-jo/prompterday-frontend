@@ -5,6 +5,7 @@ import ResultPage from './component/Result';
 import SelectConditionPage from './component/SelectCondition';
 import SelectExpert from './component/SelectExpert';
 import PhotoPage from './component/Photo';
+import IntroPage from './component/Intro';
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
       {
         path: 'result',
         element: <ResultPage />,
+      },
+      {
+        path: 'intro',
+        element: <IntroPage />,
       },
     ],
   },
