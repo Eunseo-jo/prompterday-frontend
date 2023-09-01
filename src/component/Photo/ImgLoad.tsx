@@ -110,11 +110,9 @@ interface ImgLoad {
   valuesRef: React.MutableRefObject<ValuesRef | null>;
   isScan: boolean;
   scanToggle: (prevState: boolean) => void;
-  inputDisabled: () => void;
 }
 
-const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
-  const [isImgUpload, setIsImgUpload] = useState(false);
+const ImgLoad = ({ valuesRef, isScan, scanToggle }: ImgLoad) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [inputImage, setInputImage] = useState<InputImage>({
     imgURL: imgLoad,
@@ -177,9 +175,6 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
     imageFileName,
     imageFileFormat,
   }: ScanImg) => {
-    setIsImgUpload(true);
-    inputDisabled();
-
     const responseOCR = await requestOCR({
       dataURL: imgURL.split(',')[1],
       imageFileName,
@@ -192,6 +187,7 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
         (acc, { inferText }) => (acc += ' ' + inferText),
         '',
       );
+
       const option = valuesRef.current.option;
       const responseInferText = await ingredients({
         inferText,
@@ -219,7 +215,6 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
   const changeInputImg = (changeImg: string) => {
     if (inputImage.beforeImg !== changeImg && imgRef.current) {
       scanToggle(true);
-      setIsImgUpload(true);
     }
     setInputImage((prev) => ({
       ...prev,
@@ -233,7 +228,7 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
         <ImgContainer
           $isScan={
             (isScan && valuesRef.current?.inferText !== undefined) ||
-            isImgUpload
+            inputImage.imgURL !== imgLoad
           }
         >
           <ScanbarContainer>
@@ -254,7 +249,7 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
             disabled={isScan}
             onChange={handlerImgLoad}
           />
-          {!isImgUpload && (
+          {inputImage.imgURL === imgLoad && (
             <Explanation>
               <CircleImg src={circle} />
               <NutritionistImg
@@ -266,7 +261,7 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
         </ImgContainer>
       </label>
 
-      {isImgUpload ? (
+      {inputImage.imgURL !== imgLoad ? (
         isScan ? (
           <StateText>사진이 흔들리지 않았는지 확인해주세요.</StateText>
         ) : (
@@ -280,7 +275,7 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
       <Button isDisabled={isScan} onClick={handleButtonImgLoad}>
         {isScan ? (
           <ButtonStateText />
-        ) : isImgUpload ? (
+        ) : inputImage.imgURL !== imgLoad ? (
           '사진 재업로드'
         ) : (
           '사진 업로드'

@@ -58,7 +58,7 @@ const PhotoPage = () => {
   const navigate = useNavigate();
   const [isScan, setIsScan] = useState(false);
   const [isInputDisabled, setIsInputDisabled] = useState(true);
-  const [isNextButton, setIsNextButton] = useState(false);
+  const [isNextButton, setIsNextButton] = useState(true);
   const valuesRef = useRef<ValuesRef | null>(null);
   const inferTextRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -73,11 +73,27 @@ const PhotoPage = () => {
     }
   }, []);
 
-  const handleEdit = async () => {
-    await setIsInputDisabled(false);
+  useEffect(() => {
+    const { current: inferTextCurrent } = inferTextRef;
+    const { current: valuesCurrent } = valuesRef;
 
-    if (inferTextRef.current) {
+    if (!isScan) {
+      if (inferTextCurrent && valuesCurrent?.inferText) {
+        inferTextCurrent.value += valuesCurrent.inferText.join(',');
+        setIsNextButton(false);
+      }
+    }
+    if (inferTextCurrent && valuesCurrent?.inferText && isScan) {
+      inferTextCurrent.value = '';
+    }
+  }, [isScan]);
+
+  const handleEdit = async () => {
+    await setIsInputDisabled((prev) => !prev);
+
+    if (inferTextRef.current && isInputDisabled) {
       const textarea = inferTextRef.current;
+
       textarea.focus();
       textarea.selectionStart = textarea.selectionEnd = textarea.value.length;
     }
@@ -99,10 +115,6 @@ const PhotoPage = () => {
     setIsScan(state);
   };
 
-  const inputDisabled = () => {
-    setIsInputDisabled(true);
-  };
-
   const inputEmptyCheck = () => {
     if (inferTextRef.current?.value === '') {
       setIsNextButton(true);
@@ -117,30 +129,22 @@ const PhotoPage = () => {
         <Back />
       </Header>
 
-      <ImgLoad
-        isScan={isScan}
-        scanToggle={scanToggle}
-        valuesRef={valuesRef}
-        inputDisabled={inputDisabled}
-      />
+      <ImgLoad isScan={isScan} scanToggle={scanToggle} valuesRef={valuesRef} />
 
       <InferTextContainer>
-        {!isScan && valuesRef.current?.inferText !== undefined && (
-          <>
-            <InferText
-              ref={inferTextRef}
-              defaultValue={valuesRef.current?.inferText}
-              disabled={isInputDisabled}
-              onChange={inputEmptyCheck}
-            />
-            <EditImg src={edit} onClick={handleEdit} />
-          </>
-        )}
+        <>
+          <InferText
+            ref={inferTextRef}
+            disabled={isInputDisabled || isScan}
+            onChange={inputEmptyCheck}
+            placeholder={`성분 뒤에 ,(쉼표)를 넣어주세요`}
+          />
+          <EditImg src={edit} onClick={handleEdit} />
+        </>
       </InferTextContainer>
-
       <Button
         isDisabled={
-          isScan || valuesRef.current?.inferText === undefined || isNextButton
+          isScan || inferTextRef?.current?.value === undefined || isNextButton
         }
         onClick={onClickNext}
       >
