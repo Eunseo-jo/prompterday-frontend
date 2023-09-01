@@ -24,6 +24,9 @@ const ResultSummary = styled.div`
       color: var(--color-main);
       font-size: 1.25rem;
       font-weight: var(--font-bold);
+      .danger {
+        color: var(--color-danger);
+      }
     }
   }
   span {
@@ -139,7 +142,12 @@ const Analysis = ({ resultData }: { resultData: ResponseItem[] }) => {
     <>
       <ResultSummary>
         <p>
-          이 제품은 <span>먹어도 괜찮아요</span>
+          이 제품은
+          {result.danger.length > 0 ? (
+            <span className="danger"> 섭취에 주의가 필요해요</span>
+          ) : (
+            <span>먹어도 괜찮아요</span>
+          )}
         </p>
         <LabelBox>
           {labels.map((label) => (
