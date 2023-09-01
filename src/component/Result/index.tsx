@@ -13,7 +13,7 @@ const ResultPage = () => {
   const [resultData, setResultData] = useState<ResponseItem[]>();
 
   const [percentage, setPercentage] = useState(0);
-  const [intervalTime, setIntervalTime] = useState(350);
+  const [intervalTime, setIntervalTime] = useState(250);
 
   useEffect(() => {
     const valuesString = queryParams.get('values');
@@ -40,9 +40,9 @@ const ResultPage = () => {
     const timer = setInterval(() => {
       if (percentage < 90) {
         setPercentage((prev) => prev + 1);
-      } else if (resultData && userDisease) {
-        setIntervalTime(50); // Increase the speed
-        setPercentage((prev) => (prev >= 100 ? prev : prev + 1));
+      } else if (resultData && userDisease && percentage < 100) {
+        setIntervalTime(50);
+        setPercentage((prev) => prev + 1);
       }
     }, intervalTime);
 
@@ -51,7 +51,7 @@ const ResultPage = () => {
 
   return (
     <>
-      {resultData && userDisease ? (
+      {percentage === 100 && resultData && userDisease ? (
         <Result userDisease={userDisease} resultData={resultData} />
       ) : (
         <LoadingPage percentage={percentage} />

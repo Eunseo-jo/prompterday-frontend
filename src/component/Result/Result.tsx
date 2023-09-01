@@ -67,7 +67,7 @@ const Result = ({ userDisease, resultData }: ResultProps) => {
         <Analysis resultData={resultData} />
       </section>
       <Warning>*AI답변이므로 정확한 내용은 의사와 상담하세요</Warning>
-      <Button isDisabled={false} onClick={() => navigate('/')}>
+      <Button isDisabled={false} onClick={() => navigate('/home')}>
         처음으로
       </Button>
     </Wrapper>
