@@ -1,13 +1,14 @@
 import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import Button from '../common/Button';
-import Icon from '../common/Icon';
 import Big_Logo from '../../assets/Big_Logo.png';
 import Intro from '../../assets/Intro.png';
 import Intro1 from '../../assets/Intro1.png';
 import Intro2 from '../../assets/Intro2.png';
 import Intro3 from '../../assets/Intro3.png';
 import search from '../../assets/search.svg';
+import arrowDown from '../../assets/arrowDown.svg';
+import { useEffect } from 'react';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -27,19 +28,6 @@ const Wrapper = styled.div`
   }
 `;
 
-const Btn = styled.button`
-  height: 25px;
-  color: #999;
-  text-align: center;
-  font-size: 0.875rem;
-  font-style: normal;
-  padding: 4px 12px;
-  border-radius: 5px;
-  border: 1px solid #d9d9d9;
-  margin-top: 40px;
-  margin-bottom: 15px;
-`;
-
 const ImgBox = styled.div`
   img {
     width: 80%;
@@ -49,6 +37,7 @@ const ImgBox = styled.div`
 
 const Logo = styled.img`
   width: 80%;
+  margin-top: 40px;
   margin-bottom: 34px;
 `;
 
@@ -60,7 +49,7 @@ const IconBox = styled.div`
 `;
 
 const HighlightBox = styled.div`
-  width: 100%;
+  width: 150%;
   height: 105px;
   display: flex;
   flex-direction: column;
@@ -98,7 +87,6 @@ const IntroBox = styled.div`
   img {
     width: 100%;
     margin-bottom: 27px;
-    box-shadow: 0px 2px 4px 1px rgba(0, 0, 0, 0.25);
   }
   p {
     font-size: 1rem;
@@ -119,12 +107,18 @@ const Warning = styled.span`
 const IntroPage = () => {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (localStorage.getItem('visited')) {
+      navigate('/home');
+    }
+  }, [navigate]);
+
   const onClickBtn = () => {
+    localStorage.setItem('visited', 'true');
     navigate('/home');
   };
   return (
     <Wrapper>
-      <Btn onClick={onClickBtn}>바로 시작하기</Btn>
       <Logo src={Big_Logo} alt="Logo" />
       <ImgBox>
         <img src={Intro} alt="Intro Image" />
@@ -138,8 +132,7 @@ const IntroPage = () => {
         <span>커넥션을 사용해보세요</span>
       </HighlightBox>
       <IconBox>
-        <Icon icon="arrowDown" size={35} color="var(--color-main)" />
-        <Icon icon="arrowDown" size={35} color="var(--color-main)" />
+        <img src={arrowDown} />
       </IconBox>
       <p>
         커넥션은 사용자의 질병에 근거하여 <br />
