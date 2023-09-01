@@ -120,7 +120,7 @@ const IntroPage = () => {
   const navigate = useNavigate();
 
   const onClickBtn = () => {
-    navigate('/');
+    navigate('/home');
   };
   return (
     <Wrapper>
