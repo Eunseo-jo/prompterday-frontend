@@ -79,7 +79,10 @@ const MyDisease = ({ mode, selectedList, onDelete, reset }: MyDiseaseProps) => {
       <ListContainer>
         {selectedList?.map((item) => (
           <List key={item} mode={mode} onClick={() => onDelete?.(item)}>
-            {item} <Icon icon="close" size={20} color="var(--color-sub-2)" />
+            {item}
+            {mode === 'select' ? (
+              <Icon icon="close" size={20} color="var(--color-sub-2)" />
+            ) : null}
           </List>
         ))}
       </ListContainer>
