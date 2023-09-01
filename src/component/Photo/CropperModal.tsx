@@ -20,6 +20,10 @@ const StyledCropper = styled(Cropper)`
   .cropper-point {
     background-color: var(--color-sub-3);
   }
+
+  .cropper-modal {
+    backdrop-filter: blur(100px);
+  }
 `;
 
 const EditContainer = styled.div`
