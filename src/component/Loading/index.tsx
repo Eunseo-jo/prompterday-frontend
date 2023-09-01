@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import styled from 'styled-components';
-import LogoImage from '../../assets/Logo.svg';
+import Big_Logo from '../../assets/Big_Logo.png';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -19,6 +18,7 @@ const Wrapper = styled.div`
   }
 
   img {
+    width: 80%;
     margin-top: 45px;
     margin-bottom: 120px;
   }
@@ -46,20 +46,10 @@ const LoadingCircleContainer = styled.div`
   }
 `;
 
-const LoadingPage = () => {
-  const [percentage, setPercentage] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setPercentage((prev) => (prev >= 100 ? 0 : prev + 1));
-    }, 350);
-
-    return () => clearInterval(timer);
-  }, []);
-
+const LoadingPage = ({ percentage }: { percentage: number }) => {
   return (
     <Wrapper>
-      <img src={LogoImage} />
+      <img src={Big_Logo} />
 
       <LoadingCircleContainer>
         <CircularProgressbar

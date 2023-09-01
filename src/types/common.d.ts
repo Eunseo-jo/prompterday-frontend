@@ -5,9 +5,13 @@ export interface ResponseItem {
   characteristic: string;
   intake: string | null;
 }
-
-export interface Result {
+export interface Results {
   danger: ResponseItem[];
   warn: ResponseItem[];
   normal: ResponseItem[];
+}
+export interface ValuesRef {
+  disease: string[];
+  option: string;
+  inferText: string[] | undefined;
 }

@@ -36,11 +36,7 @@ const ListContainer = styled.ul`
   box-sizing: border-box;
 `;
 
-interface ListProps {
-  mode: 'select' | 'result';
-}
-
-const List = styled.li<ListProps>`
+const List = styled.li<{ mode: MyDiseaseProps['mode'] }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -63,7 +59,7 @@ const List = styled.li<ListProps>`
 
 interface MyDiseaseProps {
   mode: 'select' | 'result';
-  selectedList: string[];
+  selectedList: string[] | null;
   onDelete?: (item: string) => void;
   reset?: () => void;
 }
@@ -81,9 +77,12 @@ const MyDisease = ({ mode, selectedList, onDelete, reset }: MyDiseaseProps) => {
         ) : null}
       </Controller>
       <ListContainer>
-        {selectedList.map((item) => (
+        {selectedList?.map((item) => (
           <List key={item} mode={mode} onClick={() => onDelete?.(item)}>
-            {item} <Icon icon="close" size={20} color="var(--color-sub-2)" />
+            {item}
+            {mode === 'select' ? (
+              <Icon icon="close" size={20} color="var(--color-sub-2)" />
+            ) : null}
           </List>
         ))}
       </ListContainer>

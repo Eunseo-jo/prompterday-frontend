@@ -14,21 +14,29 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  white-space: nowrap;
+`;
 
-  section {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    justify-content: center;
-  }
-  h1 {
-    text-align: center;
-    position: relative;
-    svg {
-      position: absolute;
-      top: 2px;
-      right: 0px;
-    }
+const MainContent = styled.section`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-evenly;
+  align-items: center;
+`;
+
+const H1 = styled.h1`
+  font-size: 1.5rem;
+  font-weight: var(--font-bold);
+  line-height: 1.875rem;
+  margin: 24px 0;
+  text-align: center;
+  position: relative;
+  svg {
+    position: absolute;
+    top: 2px;
+    right: -25px;
   }
 `;
 
@@ -47,22 +55,24 @@ const BackIcon = styled.div`
 `;
 
 const ImageBox = styled.div<{ selected: boolean }>`
+  max-width: 80%;
   display: flex;
   flex-direction: column;
+  align-items: center;
   cursor: pointer;
-  padding: 13px 20px;
+  padding: 8px 20px;
+  box-sizing: border-box;
   border-radius: 10px;
   color: ${(props) => (props.selected ? 'black' : 'var(--color-sub-2)')};
   box-shadow: ${(props) =>
     props.selected ? '1px 1px 4px 1px rgba(0,0,0,0.25)' : 'none'};
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   p {
     display: flex;
     justify-content: center;
   }
   img {
-    height: 194px;
-    weight: 215px;
+    width: 100%;
     margin-bottom: 16px;
   }
 `;
@@ -123,8 +133,9 @@ const SelectExpert = () => {
           height={20}
         />
       </Header>
-      <section>
-        <h1>
+
+      <MainContent>
+        <H1>
           누구에게 물어볼까요?
           <Icon
             icon="detail"
@@ -132,7 +143,7 @@ const SelectExpert = () => {
             color="var(--color-main)"
             onClick={openModal}
           />
-        </h1>
+        </H1>
         <ImageBox
           onClick={() => onClickImageBox('NUTRITIONIST')}
           selected={selected === 'NUTRITIONIST'}
@@ -147,7 +158,7 @@ const SelectExpert = () => {
           <img src={chemist} />
           <p>약사(의약품)</p>
         </ImageBox>
-      </section>
+      </MainContent>
       <Info isOpen={modalIsOpen} closeModal={closeModal} />
       <Button isDisabled={selected === ''} onClick={onClickNext}>
         다음

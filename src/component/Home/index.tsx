@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Button from '../common/Button';
-import LogoImage from '../../assets/Logo.svg';
+import Big_Logo from '../../assets/Big_Logo.png';
 import Icon from '../common/Icon';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,6 +12,14 @@ const Wrapper = styled.div`
   align-items: center;
   word-break: keep-all;
 
+  section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+  }
+
   p {
     display: flex;
     font-size: 1.25rem;
@@ -21,6 +29,7 @@ const Wrapper = styled.div`
     margin-bottom: 100px;
   }
   img {
+    width: 80%;
     margin-top: 45px;
   }
 `;
@@ -33,7 +42,6 @@ const SearchBox = styled.div`
   align-items: center;
   justify-content: flex-end;
   cursor: pointer;
-  margin-bottom: 271px;
 `;
 
 const HomePage = () => {
@@ -41,12 +49,13 @@ const HomePage = () => {
 
   return (
     <Wrapper>
-      <img src={LogoImage} />
-
+      <img src={Big_Logo} />
       <p>나의 질환(질병, 알러지)을 검색 후 선택해주세요</p>
-      <SearchBox onClick={() => navigate('/select')}>
-        <Icon icon="search" size={24} />
-      </SearchBox>
+      <section>
+        <SearchBox onClick={() => navigate('/select')}>
+          <Icon icon="search" size={24} />
+        </SearchBox>
+      </section>
 
       <Button isDisabled={true} onClick={() => navigate('/select')}>
         다음
