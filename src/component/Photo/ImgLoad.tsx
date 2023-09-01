@@ -188,15 +188,17 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle }: ImgLoad) => {
         '',
       );
 
-      const option = valuesRef.current.option;
-      const responseInferText = await ingredients({
-        inferText,
-        option,
-      });
-      valuesRef.current = {
-        ...valuesRef.current,
-        inferText: responseInferText,
-      };
+      if (inferText !== '') {
+        const option = valuesRef.current.option;
+        const responseInferText = await ingredients({
+          inferText,
+          option,
+        });
+        valuesRef.current = {
+          ...valuesRef.current,
+          inferText: responseInferText,
+        };
+      }
     }
     scanToggle(false);
   };
