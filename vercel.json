@@ -1,14 +1,16 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
-  "headers": [
+  "rewrites": [
     {
-      "source": "/[^.]+",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
+      "source": "/ocr/(.*)",
+      "destination": "https://e7nd31pts4.apigw.ntruss.com/$1"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "http://13.124.148.79:3000/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
