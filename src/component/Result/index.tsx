@@ -38,10 +38,13 @@ const ResultPage = () => {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      if (percentage < 90) {
+      if (percentage < 50) {
+        setPercentage((prev) => prev + 1);
+      } else if (percentage < 90) {
+        setIntervalTime(200);
         setPercentage((prev) => prev + 1);
       } else if (resultData && userDisease && percentage < 100) {
-        setIntervalTime(50);
+        setIntervalTime(150);
         setPercentage((prev) => prev + 1);
       }
     }, intervalTime);
