@@ -40,6 +40,7 @@ const ResultPage = () => {
 
   useEffect(() => {
     const randomStop = getRandomNumberInRange(50, 70);
+
     let requestId: number;
 
     const updatePercentage = () => {
