@@ -7,7 +7,7 @@ import Detail from './Detail';
 
 const ResultSummary = styled.div`
   width: 100%;
-  height: 105px;
+  height: 87px;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
@@ -141,7 +141,6 @@ const Analysis = ({ resultData }: { resultData: ResponseItem[] }) => {
         <p>
           이 제품은 <span>먹어도 괜찮아요</span>
         </p>
-        <span>*AI답변이므로 정확한 내용은 의사와 상담하세요</span>
         <LabelBox>
           {labels.map((label) => (
             <li key={label.id}>
