@@ -40,29 +40,36 @@ const ResultPage = () => {
 
   useEffect(() => {
     const randomStop = getRandomNumberInRange(50, 70);
-    const timer = setTimeout(() => {
+
+    let requestId: number;
+
+    const updatePercentage = () => {
       if (percentage < 50) {
         setPercentage((prev) => prev + 1);
-      }
-      // 50 ~ 랜덤 지점까지 속도(200~500사이 랜덤) 설정
-      else if (percentage >= 50 && percentage < randomStop) {
+      } else if (percentage >= 50 && percentage < randomStop) {
         setIntervalTime(getRandomNumberInRange(200, 500));
         setPercentage((prev) => prev + 1);
-      }
-      // 데이터 받아오면 퍼센트 속도 향상
-      else if (resultData && userDisease && percentage < 100) {
+      } else if (percentage === randomStop) {
+        setTimeout(() => {
+          setPercentage((prev) => prev + 1);
+        }, getRandomNumberInRange(1000, 5000));
+      } else if (resultData && userDisease && percentage < 100) {
         setIntervalTime(150);
         setPercentage((prev) => prev + 1);
       }
-      // 랜덤 값으로 일시 대기(최대 5초)
-      if (percentage === randomStop) {
-        setTimeout(() => {
-          setPercentage((prev) => prev + getRandomNumberInRange(1, 5));
-        }, getRandomNumberInRange(1000, 5000));
-      }
-    }, intervalTime);
 
-    return () => clearInterval(timer);
+      if (percentage < 100) {
+        requestId = requestAnimationFrame(updatePercentage);
+      } else {
+        cancelAnimationFrame(requestId);
+      }
+    };
+
+    updatePercentage();
+
+    return () => {
+      cancelAnimationFrame(requestId);
+    };
   }, [percentage, resultData, userDisease, intervalTime]);
 
   return (
