@@ -47,6 +47,7 @@ const List = styled.li<{ mode: MyDiseaseProps['mode'] }>`
   border-radius: 1.875rem;
   padding: 6px 0;
   padding-left: 12px;
+  padding-right: ${(props) => (props.mode === 'select' ? '' : '12px')};
   box-sizing: border-box;
   cursor: ${(props) => (props.mode === 'select' ? 'pointer' : 'default')};
   margin-right: 5px;
