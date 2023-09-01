@@ -34,7 +34,7 @@ const EditImg = styled.img`
   bottom: 1px;
 `;
 
-const InferText = styled.textarea<{ show: boolean }>`
+const InferText = styled.textarea<{ $show: boolean }>`
   width: 100%;
   height: 100%;
 
@@ -51,7 +51,7 @@ const InferText = styled.textarea<{ show: boolean }>`
   word-break: keep-all;
   outline: none;
   resize: none;
-  display: ${({ show }) => show && 'none'};
+  display: ${({ $show }) => $show && 'none'};
 `;
 
 const PhotoPage = () => {
@@ -147,9 +147,9 @@ const PhotoPage = () => {
             disabled={isInputDisabled || isScan}
             onChange={inputEmptyCheck}
             placeholder={`성분 뒤에 ,(쉼표)를 넣어주세요`}
-            show={isScan}
+            $show={isScan}
           />
-          <EditImg src={edit} onClick={handleEdit} />
+          {!isScan && <EditImg src={edit} onClick={handleEdit} />}
         </>
       </InferTextContainer>
       <Button

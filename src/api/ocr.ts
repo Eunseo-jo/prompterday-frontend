@@ -13,8 +13,10 @@ export const requestOCR = async ({
   imageFileFormat,
 }: RequestOCR) => {
   try {
+    console.log(process.env.REACT_APP_OCR_API_GATEWAY);
+
     const response = await axios.post<ResponseOCR>(
-      `${process.env.REACT_APP_OCR_API_GATEWAY}`,
+      import.meta.env.REACT_APP_OCR_API_GATEWAY,
       {
         version: 'V2',
         requestId: 'id',
