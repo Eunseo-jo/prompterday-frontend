@@ -24,9 +24,11 @@ const ResultSummary = styled.div`
       color: var(--color-main);
       font-size: 1.25rem;
       font-weight: var(--font-bold);
-      .danger {
-        color: var(--color-danger);
-      }
+    }
+    .danger {
+      color: var(--color-danger);
+      font-size: 1.25rem;
+      font-weight: var(--font-bold);
     }
   }
   span {
