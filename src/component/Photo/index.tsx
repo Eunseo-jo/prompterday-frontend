@@ -34,7 +34,7 @@ const EditImg = styled.img`
   bottom: 1px;
 `;
 
-const InferText = styled.textarea`
+const InferText = styled.textarea<{ show: boolean }>`
   width: 100%;
   height: 100%;
 
@@ -51,6 +51,7 @@ const InferText = styled.textarea`
   word-break: keep-all;
   outline: none;
   resize: none;
+  display: ${({ show }) => show && 'none'};
 `;
 
 const PhotoPage = () => {
@@ -79,12 +80,18 @@ const PhotoPage = () => {
 
     if (!isScan) {
       if (inferTextCurrent && valuesCurrent?.inferText) {
-        inferTextCurrent.value += valuesCurrent.inferText.join(',');
+        inferTextCurrent.value += valuesCurrent.inferText;
         setIsNextButton(false);
       }
-    }
-    if (inferTextCurrent && valuesCurrent?.inferText && isScan) {
-      inferTextCurrent.value = '';
+    } else {
+      if (inferTextCurrent) {
+        if (inferTextCurrent.value && inferTextCurrent.value.at(-1) !== ',') {
+          inferTextCurrent.value += ', ';
+        }
+        if (valuesCurrent?.inferText) {
+          inferTextCurrent.value = '';
+        }
+      }
     }
   }, [isScan]);
 
@@ -100,14 +107,16 @@ const PhotoPage = () => {
   };
 
   const onClickNext = () => {
-    const { current: inferTextCurrent } = inferTextRef;
-    const { current: valuesCurrent } = valuesRef;
+    if (inferTextRef?.current?.value && valuesRef.current) {
+      const inferTextValues = inferTextRef?.current?.value.split(',');
 
-    if (inferTextCurrent?.value && valuesCurrent?.inferText) {
-      valuesCurrent.inferText = inferTextCurrent.value.split(',');
+      valuesRef.current = {
+        ...valuesRef.current,
+        inferText: inferTextValues,
+      };
     }
 
-    const values = encodeURIComponent(JSON.stringify(valuesCurrent));
+    const values = encodeURIComponent(JSON.stringify(valuesRef.current));
     navigate(`/result?values=${values}`);
   };
 
@@ -138,6 +147,7 @@ const PhotoPage = () => {
             disabled={isInputDisabled || isScan}
             onChange={inputEmptyCheck}
             placeholder={`성분 뒤에 ,(쉼표)를 넣어주세요`}
+            show={isScan}
           />
           <EditImg src={edit} onClick={handleEdit} />
         </>

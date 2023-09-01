@@ -263,17 +263,16 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle }: ImgLoad) => {
         </ImgContainer>
       </label>
 
-      {inputImage.imgURL !== imgLoad ? (
-        isScan ? (
-          <StateText>사진이 흔들리지 않았는지 확인해주세요.</StateText>
+      {inputImage.imgURL !== imgLoad &&
+        (isScan ? (
+          <StateText>*AI답변이므로 정확한 내용은 의사와 상담하세요</StateText>
         ) : (
           <EndText>
             {valuesRef.current?.inferText === undefined
               ? '*요청실패 재업로드'
               : '*결과를 확인해주세요'}
           </EndText>
-        )
-      ) : null}
+        ))}
       <Button isDisabled={isScan} onClick={handleButtonImgLoad}>
         {isScan ? (
           <ButtonStateText />
