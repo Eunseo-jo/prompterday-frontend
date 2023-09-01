@@ -40,7 +40,7 @@ const ResultPage = () => {
 
   useEffect(() => {
     const randomStop = getRandomNumberInRange(50, 70);
-    const timer = setInterval(() => {
+    const timer = setTimeout(() => {
       if (percentage < 50) {
         setPercentage((prev) => prev + 1);
       }
