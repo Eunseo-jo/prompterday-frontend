@@ -4,6 +4,8 @@ import * as path from 'path';
 
 export default ({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
+  process.env = Object.assign(process.env, loadEnv(mode, process.cwd(), ''));
+
   return defineConfig({
     envPrefix: 'REACT_APP_',
     plugins: [react()],
