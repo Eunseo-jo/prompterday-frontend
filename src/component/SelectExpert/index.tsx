@@ -14,6 +14,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  white-space: nowrap;
 `;
 
 const MainContent = styled.section`
@@ -54,10 +55,12 @@ const BackIcon = styled.div`
 `;
 
 const ImageBox = styled.div<{ selected: boolean }>`
+  max-width: 80%;
   display: flex;
   flex-direction: column;
+  align-items: center;
   cursor: pointer;
-  padding: 0px 20px;
+  padding: 8px 20px;
   box-sizing: border-box;
   border-radius: 10px;
   color: ${(props) => (props.selected ? 'black' : 'var(--color-sub-2)')};
@@ -69,8 +72,7 @@ const ImageBox = styled.div<{ selected: boolean }>`
     justify-content: center;
   }
   img {
-    height: 194px;
-    weight: 215px;
+    width: 100%;
     margin-bottom: 16px;
   }
 `;
