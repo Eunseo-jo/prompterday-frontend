@@ -10,8 +10,6 @@ export const getResult = async ({ disease, inferText, option }: ValuesRef) => {
     url = `${import.meta.env.REACT_APP_GPT_API_GETRESULT_CHEMIST}`;
   }
 
-  console.log(option);
-
   try {
     const response = await axios.post(
       url,
