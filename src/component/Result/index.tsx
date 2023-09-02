@@ -8,6 +8,10 @@ import { getResult } from '@/api/getResult';
 const getRandomNumberInRange = (min: number, max: number): number =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
+const randomStop = getRandomNumberInRange(50, 70);
+const randomWait = getRandomNumberInRange(3000, 6000);
+const randomTime = getRandomNumberInRange(200, 500);
+
 const ResultPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -15,7 +19,8 @@ const ResultPage = () => {
   const [userDisease, setUserDisease] = useState<string[] | null>(null);
   const [resultData, setResultData] = useState<ResponseItem[]>();
   const [percentage, setPercentage] = useState(0);
-  const [intervalTime, setIntervalTime] = useState(350);
+  //const [intervalTime, setIntervalTime] = useState(350);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     const valuesString = queryParams.get('values');
@@ -39,38 +44,42 @@ const ResultPage = () => {
   }, []);
 
   useEffect(() => {
-    const randomStop = getRandomNumberInRange(50, 70);
+    let timer: NodeJS.Timeout | null;
 
-    let requestId: number;
+    if (!isPaused && percentage < 100) {
+      timer = setInterval(
+        () => {
+          if (percentage < randomStop) {
+            setPercentage((prev) => (prev < randomStop ? prev + 1 : prev));
+          } else if (percentage === randomStop && !isPaused) {
+            setIsPaused(true);
+            clearInterval(timer!);
 
-    const updatePercentage = () => {
-      if (percentage < 50) {
-        setPercentage((prev) => prev + 1);
-      } else if (percentage >= 50 && percentage < randomStop) {
-        setIntervalTime(getRandomNumberInRange(200, 500));
-        setPercentage((prev) => prev + 1);
-      } else if (percentage === randomStop) {
-        setTimeout(() => {
-          setPercentage((prev) => prev + 1);
-        }, getRandomNumberInRange(1000, 5000));
-      } else if (resultData && userDisease && percentage < 100) {
-        setIntervalTime(150);
-        setPercentage((prev) => prev + 1);
-      }
+            setTimeout(() => {
+              setIsPaused(false);
+            }, randomWait);
+          } else if (percentage >= randomStop && !isPaused && percentage < 90) {
+            setPercentage((prev) => (prev < 100 ? prev + 1 : prev));
+          } else if (percentage < 90) {
+            if (resultData && userDisease) {
+              setPercentage((prev) => (prev < 100 ? prev + 1 : prev));
+            }
+          } else if (resultData && userDisease && percentage < 100) {
+            setPercentage((prev) => (prev < 100 ? prev + 1 : prev));
+          }
+        },
+        percentage >= 50 && percentage < randomStop ? randomTime : 150,
+      );
+    }
 
-      if (percentage < 100) {
-        requestId = requestAnimationFrame(updatePercentage);
-      } else {
-        cancelAnimationFrame(requestId);
-      }
-    };
+    return () => clearInterval(timer!);
+  }, [isPaused, percentage, resultData, userDisease]);
 
-    updatePercentage();
-
-    return () => {
-      cancelAnimationFrame(requestId);
-    };
-  }, [percentage, resultData, userDisease, intervalTime]);
+  useEffect(() => {
+    if (!isPaused && percentage === randomStop) {
+      setPercentage(randomStop + 1);
+    }
+  }, [isPaused]);
 
   return (
     <>
