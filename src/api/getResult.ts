@@ -5,10 +5,12 @@ export const getResult = async ({ disease, inferText, option }: ValuesRef) => {
   let url = '';
 
   if (option === 'NUTRITIONIST') {
-    url = `${process.env.REACT_APP_GPT_API_GETRESULT_NUTRITIONIST}`;
+    url = `${import.meta.env.REACT_APP_GPT_API_GETRESULT_NUTRITIONIST}`;
   } else if (option === 'CHEMIST') {
-    url = `${process.env.REACT_APP_GPT_API_GETRESULT_CHEMIST}`;
+    url = `${import.meta.env.REACT_APP_GPT_API_GETRESULT_CHEMIST}`;
   }
+
+  console.log(option);
 
   try {
     const response = await axios.post(

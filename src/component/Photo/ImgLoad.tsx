@@ -1,7 +1,8 @@
 import styled, { keyframes } from 'styled-components';
 import imgLoad from '../../assets/imgLoad.svg';
 import circle from '../../assets/circle.svg';
-import nutritionist2 from '../../assets/nutritionist2.svg';
+import nutritionist from '../../assets/nutritionist.svg';
+import chemist from '../../assets/chemist.svg';
 import React, { useEffect, useRef, useState } from 'react';
 import Button from '../common/Button';
 import ScanBar from './ScanBar';
@@ -10,6 +11,7 @@ import { InputImage, ScanImg, ValuesRef } from '@/types/photo';
 import { ingredients } from '@/api/ingredients';
 import CropperModal from './CropperModal';
 import { ReactCropperElement } from 'react-cropper';
+import { useLocation } from 'react-router-dom';
 
 const ImgContainer = styled.figure<{ $isScan: boolean }>`
   display: flex;
@@ -108,11 +110,9 @@ interface ImgLoad {
   valuesRef: React.MutableRefObject<ValuesRef | null>;
   isScan: boolean;
   scanToggle: (prevState: boolean) => void;
-  inputDisabled: () => void;
 }
 
-const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
-  const [isImgUpload, setIsImgUpload] = useState(false);
+const ImgLoad = ({ valuesRef, isScan, scanToggle }: ImgLoad) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [inputImage, setInputImage] = useState<InputImage>({
     imgURL: imgLoad,
@@ -122,6 +122,8 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
   });
   const imgRef = useRef<ReactCropperElement | null>(null);
   const imgHeightRef = useRef(null);
+  const { search } = useLocation();
+  const optionIcon = search.includes('NUTRITIONIST');
 
   useEffect(() => {
     if (isScan) {
@@ -173,9 +175,6 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
     imageFileName,
     imageFileFormat,
   }: ScanImg) => {
-    setIsImgUpload(true);
-    inputDisabled();
-
     const responseOCR = await requestOCR({
       dataURL: imgURL.split(',')[1],
       imageFileName,
@@ -188,16 +187,18 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
         (acc, { inferText }) => (acc += ' ' + inferText),
         '',
       );
-      const option = valuesRef.current.option;
 
-      const responseInferText = await ingredients({
-        inferText,
-        option,
-      });
-      valuesRef.current = {
-        ...valuesRef.current,
-        inferText: responseInferText,
-      };
+      if (inferText !== '') {
+        const option = valuesRef.current.option;
+        const responseInferText = await ingredients({
+          inferText,
+          option,
+        });
+        valuesRef.current = {
+          ...valuesRef.current,
+          inferText: responseInferText,
+        };
+      }
     }
     scanToggle(false);
   };
@@ -216,7 +217,6 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
   const changeInputImg = (changeImg: string) => {
     if (inputImage.beforeImg !== changeImg && imgRef.current) {
       scanToggle(true);
-      setIsImgUpload(true);
     }
     setInputImage((prev) => ({
       ...prev,
@@ -230,7 +230,7 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
         <ImgContainer
           $isScan={
             (isScan && valuesRef.current?.inferText !== undefined) ||
-            isImgUpload
+            inputImage.imgURL !== imgLoad
           }
         >
           <ScanbarContainer>
@@ -251,36 +251,38 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle, inputDisabled }: ImgLoad) => {
             disabled={isScan}
             onChange={handlerImgLoad}
           />
-          {!isImgUpload && (
+          {inputImage.imgURL === imgLoad && (
             <Explanation>
               <CircleImg src={circle} />
-              <NutritionistImg src={nutritionist2}></NutritionistImg>
+              <NutritionistImg
+                src={optionIcon ? nutritionist : chemist}
+              ></NutritionistImg>
               식품의 <b> 원재료명 </b> 사진을 업로드해주세요
             </Explanation>
           )}
         </ImgContainer>
       </label>
 
-      {isImgUpload ? (
-        isScan ? (
-          <StateText>사진이 흔들리지 않았는지 확인해주세요.</StateText>
+      {inputImage.imgURL !== imgLoad &&
+        (isScan ? (
+          <StateText>*AI답변이므로 정확한 내용은 의사와 상담하세요</StateText>
         ) : (
           <EndText>
             {valuesRef.current?.inferText === undefined
               ? '*요청실패 재업로드'
               : '*결과를 확인해주세요'}
           </EndText>
-        )
-      ) : null}
+        ))}
       <Button isDisabled={isScan} onClick={handleButtonImgLoad}>
         {isScan ? (
           <ButtonStateText />
-        ) : isImgUpload ? (
+        ) : inputImage.imgURL !== imgLoad ? (
           '사진 재업로드'
         ) : (
           '사진 업로드'
         )}
       </Button>
+
       <CropperModal
         isOpen={modalOpen}
         imgRef={imgRef}

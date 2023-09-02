@@ -34,7 +34,7 @@ const EditImg = styled.img`
   bottom: 1px;
 `;
 
-const InferText = styled.textarea`
+const InferText = styled.textarea<{ $show: boolean }>`
   width: 100%;
   height: 100%;
 
@@ -51,6 +51,7 @@ const InferText = styled.textarea`
   word-break: keep-all;
   outline: none;
   resize: none;
+  display: ${({ $show }) => $show && 'none'};
 `;
 
 const PhotoPage = () => {
@@ -58,7 +59,7 @@ const PhotoPage = () => {
   const navigate = useNavigate();
   const [isScan, setIsScan] = useState(false);
   const [isInputDisabled, setIsInputDisabled] = useState(true);
-  const [isNextButton, setIsNextButton] = useState(false);
+  const [isNextButton, setIsNextButton] = useState(true);
   const valuesRef = useRef<ValuesRef | null>(null);
   const inferTextRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -73,34 +74,54 @@ const PhotoPage = () => {
     }
   }, []);
 
-  const handleEdit = async () => {
-    await setIsInputDisabled(false);
+  useEffect(() => {
+    const { current: inferTextCurrent } = inferTextRef;
+    const { current: valuesCurrent } = valuesRef;
 
-    if (inferTextRef.current) {
+    if (!isScan) {
+      if (inferTextCurrent && valuesCurrent?.inferText) {
+        inferTextCurrent.value += valuesCurrent.inferText;
+        setIsNextButton(false);
+      }
+    } else {
+      if (inferTextCurrent) {
+        if (inferTextCurrent.value && inferTextCurrent.value.at(-1) !== ',') {
+          inferTextCurrent.value += ', ';
+        }
+        if (valuesCurrent?.inferText) {
+          inferTextCurrent.value = '';
+        }
+      }
+    }
+  }, [isScan]);
+
+  const handleEdit = async () => {
+    await setIsInputDisabled((prev) => !prev);
+
+    if (inferTextRef.current && isInputDisabled) {
       const textarea = inferTextRef.current;
+
       textarea.focus();
       textarea.selectionStart = textarea.selectionEnd = textarea.value.length;
     }
   };
 
   const onClickNext = () => {
-    const { current: inferTextCurrent } = inferTextRef;
-    const { current: valuesCurrent } = valuesRef;
+    if (inferTextRef?.current?.value && valuesRef.current) {
+      const inferTextValues = inferTextRef?.current?.value.split(',');
 
-    if (inferTextCurrent?.value && valuesCurrent?.inferText) {
-      valuesCurrent.inferText = inferTextCurrent.value.split(',');
+      valuesRef.current = {
+        ...valuesRef.current,
+        inferText: inferTextValues,
+      };
     }
 
-    const values = encodeURIComponent(JSON.stringify(valuesCurrent));
+    const values = encodeURIComponent(JSON.stringify(valuesRef.current));
     navigate(`/result?values=${values}`);
   };
 
   const scanToggle = (state: boolean) => {
     setIsScan(state);
-  };
-
-  const inputDisabled = () => {
-    setIsInputDisabled(true);
   };
 
   const inputEmptyCheck = () => {
@@ -117,30 +138,23 @@ const PhotoPage = () => {
         <Back />
       </Header>
 
-      <ImgLoad
-        isScan={isScan}
-        scanToggle={scanToggle}
-        valuesRef={valuesRef}
-        inputDisabled={inputDisabled}
-      />
+      <ImgLoad isScan={isScan} scanToggle={scanToggle} valuesRef={valuesRef} />
 
       <InferTextContainer>
-        {!isScan && valuesRef.current?.inferText !== undefined && (
-          <>
-            <InferText
-              ref={inferTextRef}
-              defaultValue={valuesRef.current?.inferText}
-              disabled={isInputDisabled}
-              onChange={inputEmptyCheck}
-            />
-            <EditImg src={edit} onClick={handleEdit} />
-          </>
-        )}
+        <>
+          <InferText
+            ref={inferTextRef}
+            disabled={isInputDisabled || isScan}
+            onChange={inputEmptyCheck}
+            placeholder={`성분 뒤에 ,(쉼표)를 넣어주세요`}
+            $show={isScan}
+          />
+          {!isScan && <EditImg src={edit} onClick={handleEdit} />}
+        </>
       </InferTextContainer>
-
       <Button
         isDisabled={
-          isScan || valuesRef.current?.inferText === undefined || isNextButton
+          isScan || inferTextRef?.current?.value === undefined || isNextButton
         }
         onClick={onClickNext}
       >

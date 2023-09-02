@@ -3,7 +3,7 @@ import { keyframes, styled } from 'styled-components';
 
 const scanAnimation = (height: number) => keyframes`
   0%, 100% {
-    transform: translateY(-3px);
+    transform: translateY(-6px);
   }
   50% {
     transform: translateY(${-height}px);
