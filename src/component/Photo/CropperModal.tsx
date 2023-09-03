@@ -151,6 +151,18 @@ const getBorderStyle = (index: number) => {
   return { left: baseStyle, right: baseStyle };
 };
 
+const debounce = (func: () => void, wait: number) => {
+  let timeout: NodeJS.Timeout;
+
+  return () => {
+    clearTimeout(timeout);
+
+    timeout = setTimeout(() => {
+      func();
+    }, wait);
+  };
+};
+
 interface CropperModalProps {
   isOpen: boolean;
   imgRef: React.MutableRefObject<ReactCropperElement | null>;
@@ -192,7 +204,7 @@ const CropperModal = ({
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
   const rangeRef = useRef<HTMLInputElement | null>(null);
 
-  const onCrop = () => {
+  const originalOnCrop = () => {
     const imageElement = imgRef?.current;
     const cropper = imageElement?.cropper;
 
@@ -200,6 +212,8 @@ const CropperModal = ({
       setCroppedImage(cropper.getCroppedCanvas().toDataURL());
     }
   };
+
+  const onCrop = debounce(originalOnCrop, 200);
 
   const completeCropper = () => {
     if (croppedImage !== null) {
