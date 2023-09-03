@@ -241,10 +241,10 @@ const CropperModal = ({
     if (rangeRef.current) {
       rangeRef.current.value = '0';
     }
-
     if (imgRef && imgRef.current && imgRef.current.cropper) {
       imgRef.current.cropper.reset();
     }
+    setRotateValue(0);
   };
 
   const rotateImage = () => {
