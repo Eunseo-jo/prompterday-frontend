@@ -1,7 +1,10 @@
-import { ValuesRef } from '@/types/common';
+import { ValuesRef, ResponseItem } from '@/types/common';
 import axios from 'axios';
 
-export const getResult = async ({ disease, inferText, option }: ValuesRef) => {
+export const getResult = async (
+  { disease, inferText, option }: ValuesRef,
+  retryCount = 0,
+): Promise<ResponseItem[] | undefined> => {
   let url = '';
 
   if (option === 'NUTRITIONIST') {
@@ -27,6 +30,15 @@ export const getResult = async ({ disease, inferText, option }: ValuesRef) => {
     return response.data;
   } catch (error) {
     console.error('result API Error:', error);
-    return undefined;
+
+    if (retryCount < 3) {
+      console.log(`Retrying (${retryCount + 1})...`);
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      return getResult({ disease, inferText, option }, retryCount + 1);
+    } else {
+      throw new Error('API request failed after three attempts');
+    }
   }
 };

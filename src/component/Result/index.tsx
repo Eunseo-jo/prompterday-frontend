@@ -29,8 +29,18 @@ const ResultPage = () => {
         const values = JSON.parse(decodeURIComponent(valuesString));
         setUserDisease(values.disease);
         (async () => {
-          const response = await getResult(values);
-          setResultData(response);
+          try {
+            const response = await getResult(values);
+            if (response) setResultData(response);
+          } catch (error) {
+            console.error('API Error:', error);
+            alert('결과 요청 실패');
+            navigate(
+              `/select/photo?values=${encodeURIComponent(
+                JSON.stringify(values),
+              )}`,
+            );
+          }
         })();
       } catch (error) {
         console.error(
@@ -39,7 +49,7 @@ const ResultPage = () => {
         );
       }
     } else {
-      navigate('/', { replace: true });
+      navigate('/home', { replace: true });
     }
   }, []);
 
