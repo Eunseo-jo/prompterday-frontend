@@ -9,8 +9,8 @@ const getRandomNumberInRange = (min: number, max: number): number =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
 const randomStop = getRandomNumberInRange(50, 70);
-const randomWait = getRandomNumberInRange(3000, 6000);
-const randomTime = getRandomNumberInRange(200, 500);
+const randomWait = getRandomNumberInRange(3000, 5000);
+const randomTime = getRandomNumberInRange(350, 500);
 
 const ResultPage = () => {
   const navigate = useNavigate();
@@ -19,7 +19,6 @@ const ResultPage = () => {
   const [userDisease, setUserDisease] = useState<string[] | null>(null);
   const [resultData, setResultData] = useState<ResponseItem[]>();
   const [percentage, setPercentage] = useState(0);
-  //const [intervalTime, setIntervalTime] = useState(350);
   const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
@@ -29,8 +28,18 @@ const ResultPage = () => {
         const values = JSON.parse(decodeURIComponent(valuesString));
         setUserDisease(values.disease);
         (async () => {
-          const response = await getResult(values);
-          setResultData(response);
+          try {
+            const response = await getResult(values);
+            if (response) setResultData(response);
+          } catch (error) {
+            console.error('API Error:', error);
+            alert('결과 요청 실패');
+            navigate(
+              `/select/photo?values=${encodeURIComponent(
+                JSON.stringify(values),
+              )}`,
+            );
+          }
         })();
       } catch (error) {
         console.error(
@@ -39,36 +48,38 @@ const ResultPage = () => {
         );
       }
     } else {
-      navigate('/', { replace: true });
+      navigate('/home', { replace: true });
     }
   }, []);
 
   useEffect(() => {
     let timer: NodeJS.Timeout | null;
 
+    const incrementPercentage = () => {
+      setPercentage((prev) => (prev < 100 ? prev + 1 : prev));
+    };
+
     if (!isPaused && percentage < 100) {
       timer = setInterval(
         () => {
           if (percentage < randomStop) {
-            setPercentage((prev) => (prev < randomStop ? prev + 1 : prev));
-          } else if (percentage === randomStop && !isPaused) {
-            setIsPaused(true);
+            incrementPercentage();
+          } else if (percentage === randomStop && !isPaused && !resultData) {
             clearInterval(timer!);
-
-            setTimeout(() => {
-              setIsPaused(false);
-            }, randomWait);
-          } else if (percentage >= randomStop && !isPaused && percentage < 90) {
-            setPercentage((prev) => (prev < 100 ? prev + 1 : prev));
-          } else if (percentage < 90) {
+            setIsPaused(true);
+          } else if (percentage > randomStop && !isPaused && percentage < 90) {
+            incrementPercentage();
+          } else if (percentage < 90 && !resultData) {
             if (resultData && userDisease) {
-              setPercentage((prev) => (prev < 100 ? prev + 1 : prev));
+              incrementPercentage();
             }
           } else if (resultData && userDisease && percentage < 100) {
-            setPercentage((prev) => (prev < 100 ? prev + 1 : prev));
+            incrementPercentage();
           }
         },
-        percentage >= 50 && percentage < randomStop ? randomTime : 150,
+        percentage >= 50 && percentage < randomStop && !resultData
+          ? randomTime
+          : 200,
       );
     }
 
@@ -77,9 +88,12 @@ const ResultPage = () => {
 
   useEffect(() => {
     if (!isPaused && percentage === randomStop) {
-      setPercentage(randomStop + 1);
+      setTimeout(() => {
+        setPercentage(randomStop + 1);
+        setIsPaused(false);
+      }, randomWait);
     }
-  }, [isPaused]);
+  }, [isPaused, percentage]);
 
   return (
     <>
