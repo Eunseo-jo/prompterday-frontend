@@ -80,8 +80,10 @@ const PhotoPage = () => {
 
     if (!isScan) {
       if (inferTextCurrent && valuesCurrent?.inferText) {
-        inferTextCurrent.value += valuesCurrent.inferText;
-        setIsNextButton(false);
+        if (valuesCurrent.inferText[0] !== null) {
+          inferTextCurrent.value += valuesCurrent.inferText;
+          setIsNextButton(false);
+        }
       }
     } else {
       if (inferTextCurrent) {
