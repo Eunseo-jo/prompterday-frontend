@@ -32,6 +32,8 @@ const EditImg = styled.img`
 
   right: 2px;
   bottom: 1px;
+
+  cursor: pointer;
 `;
 
 const InferText = styled.textarea<{ $show: boolean }>`

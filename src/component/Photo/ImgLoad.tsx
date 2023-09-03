@@ -221,6 +221,7 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle }: ImgLoad) => {
     setInputImage((prev) => ({
       ...prev,
       imgURL: changeImg,
+      beforeImg: changeImg,
     }));
   };
 

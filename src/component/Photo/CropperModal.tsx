@@ -51,6 +51,10 @@ const EditContainer = styled.div`
     grid-row-start: 2;
     grid-column-start: 9;
   }
+
+  img {
+    cursor: pointer;
+  }
 `;
 
 const RangeInputContainer = styled.div`
@@ -70,6 +74,9 @@ const RangeInput = styled.input.attrs({ type: 'range' })`
     width: 0.1875rem;
     height: 1.6rem;
     background-color: var(--color-main);
+
+    cursor: pointer;
+    z-index: 20;
   }
 
   &::-moz-range-thumb {
@@ -78,7 +85,7 @@ const RangeInput = styled.input.attrs({ type: 'range' })`
     width: 0.1875rem;
     height: 1.6rem;
     background-color: var(--color-main);
-
+    cursor: pointer;
     z-index: 20;
   }
 `;
