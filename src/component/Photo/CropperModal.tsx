@@ -24,6 +24,8 @@ const StyledCropper = styled(Cropper)`
   .cropper-modal {
     backdrop-filter: blur(100px);
   }
+
+  max-height: 500px;
 `;
 
 const EditContainer = styled.div`
@@ -202,6 +204,7 @@ const CropperModal = ({
     },
   };
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
+  const [rotateValue, setRotateValue] = useState(0);
   const rangeRef = useRef<HTMLInputElement | null>(null);
 
   const originalOnCrop = () => {
@@ -241,6 +244,7 @@ const CropperModal = ({
     if (imgRef.current && rangeRef.current) {
       const currentRangeValue = Number(rangeRef.current.value);
       imgRef.current.cropper.rotateTo(currentRangeValue);
+      setRotateValue(currentRangeValue);
     }
   };
 
@@ -258,15 +262,14 @@ const CropperModal = ({
         src={inputImage.imgURL}
         crop={onCrop}
         ref={imgRef}
-        autoCropArea={0.7} // crop 편집 박스 초기 크기
-        minContainerHeight={420} // crop 최대 크기
+        autoCropArea={0.7}
+        minContainerHeight={420}
         minContainerWidth={370}
         dragMode={'move'}
         restore={false}
-        // rotatable 회전
       />
 
-      <RotationMark>{rangeRef.current && rangeRef.current.value}</RotationMark>
+      <RotationMark>{rotateValue}</RotationMark>
       <EditContainer>
         <RangeInputContainer>
           <RangeInput

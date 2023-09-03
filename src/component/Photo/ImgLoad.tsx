@@ -187,13 +187,13 @@ const ImgLoad = ({ valuesRef, isScan, scanToggle }: ImgLoad) => {
         (acc, { inferText }) => (acc += ' ' + inferText),
         '',
       );
-
       if (inferText !== '') {
         const option = valuesRef.current.option;
         const responseInferText = await ingredients({
           inferText,
           option,
         });
+
         valuesRef.current = {
           ...valuesRef.current,
           inferText: responseInferText,
