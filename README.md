@@ -3,8 +3,8 @@
 
 <br/>
 
-## 🔎서비스 소개
-**개인 맞춤형 AI 건강 관리 어시스턴트**, Connection
+## 🔎 서비스 소개
+**개인 맞춤형 AI 건강 관리 어시스턴트**, Connection 
 
 『 CONNECTION 』 은 사용자의 질병 정보와 음식 및 의약품의 성분을 입력받아 학습된 GPT 모델을 이용해 분석하여 사용자의 섭취 여부 판단을 돕는 서비스입니다.
 
@@ -12,10 +12,11 @@
 
 사용자가 건강 상태에 따른 안전하고 적절한 음식 또는 의약품 선택을 돕는 것이 핵심 목표입니다.
 
+[👉 바로가기](https://prompterday-frontend.vercel.app/)
 
 <br />
 
-## ✨전체 화면 구성
+## ✨ 전체 화면 구성
 <img width="810" alt="전체 페이지" src="https://github.com/Eunseo-jo/prompterday-frontend/assets/90231153/7306266d-8e6f-4a18-ba72-13c8aafd0721">
 
 
@@ -36,7 +37,7 @@
     
     
 
-## ✨주요 기능
+## ✨ 주요 기능
 ### 보유 질병 및 AI 모델(식품/의약품) 선택
 사용자는 본인에게 해당되는 질병 및 알레르기 정보를 입력하고 영양사와 약사의 지식을 가진 AI 모델을 선택하여 사용자의 개인적인 상황을 고려한 조언을 얻을 수 있습니다. 
 
@@ -60,3 +61,15 @@ GPT 모델을 활용하여 성분 분석을 수행하고 사용자에게 분석 
 <img width="200" alt="loading" src="https://github.com/Eunseo-jo/prompterday-frontend/assets/90231153/5ba5135e-bd5c-4bb0-942a-ebe21aae4e5c">
 <img width="219" alt="result" src="https://github.com/Eunseo-jo/prompterday-frontend/assets/90231153/ab123f4e-f388-41d7-baff-4dd4d4d77d07">
 
+## 💻 개발자
+
+<table>
+ <tr>    
+    <td align="center"><a href="https://github.com/Eunseo-jo"><img src="https://avatars.githubusercontent.com/Eunseo-jo" width="130px;" alt=""></a></td>
+    <td align="center"><a href="https://github.com/hyeonjun-L"><img src="https://avatars.githubusercontent.com/hyeonjun-L" width="130px;" alt=""></a></td>
+  </tr>
+  <tr>
+      <td align="center"><a href="https://github.com/Eunseo-jo"><b>조은서</b></a></td>
+     <td align="center"><a href="https://github.com/hyeonjun-L"><b>이현준</b></a></td>
+  </tr>
+</tab
